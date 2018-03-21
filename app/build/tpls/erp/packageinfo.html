@@ -1,0 +1,144 @@
+<div class="main-container" style="padding-left: 2%" ng-controller="productCtrl" ng-click="scrollon()">
+    <div class="main-container-inner">
+        <div class="space-24"></div>
+
+        <div class="page-content">
+            <div class="page-header animated bounceInLeft ">
+                <h3>
+                    <!--<i class="icon-spinner icon-spin orange bigger-125"></i>-->
+                    <b>打包管理</b>
+                </h3>
+            </div>
+            <form class="form-horizontal animated bounceInRight" role="form" style="padding-top: 2%">
+                <div class="form-group">
+                    <label class="col-md-1 control-label no-padding-right">项目：</label>
+                    <div class="col-md-2">
+                        <select id="inputprj" style="width: 120%" ng-model="project" ng-change="changeforshow(project)"
+                                ng-options="pr.id as pr.name for pr in prj" ng-disabled="!inputprj">
+                            <option value="">--请选择项目--</option>
+                        </select>
+
+                    </div>
+                    <label class="block clearfix col-md-offset-2 animated fadeInLeft">
+                                <span class="block input-icon input-icon-right">
+                                    <input type="text" class="form-control" placeholder="扫描模板二维码"
+                                           ng-keydown="ltscan($event)" ng-model="louti_id"
+                                    >
+                                </span>
+                    </label>
+                    <button type="button" class="btn btn-success" ng-click="package()">确认打包</button>
+                    <button type="button" class="btn btn-danger" ng-click="clearPackage()">清空</button>
+                    <div class="col-md-2 pull-right">
+                        <div style="padding-top: 0px" id="qrcode"></div>
+                    </div>
+                </div>
+            </form>
+            <hr>
+            <div class="row">
+               <!-- <div class="col-md-2">
+                    <table id="table0" class="table table-striped table-hover table-condensed">
+                        <thead>
+                        <tr>
+                            <th>区包</th>
+                            <th>打包情况</th>
+                        </tr>
+                        </thead>
+                        <tbody ng-repeat="x in partinfo">
+                        <tr ng-click="x.$tablechild = !x.$tablechild;" ng-init="x.$tablechild = true">
+                            <td>{{x.name}}</td>
+                            <td>{{1}}</td>
+                        </tr>
+                        <span>
+                                    <tr style="background-color: papayawhip" ng-repeat="y in x.data | filter:query"
+                                        ng-if=x.$tablechild ng-click="select_package(x.part_id,y.id)">
+                                        <td class="center">{{y.name}}</td>
+                                        <td>{{$index+1}}</td>
+                                    </tr>
+                                    </span>
+
+                        </tbody>
+                    </table>
+                </div>-->
+                <div class="col-md-6">
+                    <table id="table1" class="table table-striped table-bordered table-hover table-condensed">
+                        <thead>
+                        <tr >
+                            <th>序号</th>
+                            <th>模板名称</th>
+                            <th>模板类型</th>
+                            <th>模板编号</th>
+                            <th>扫描和打包</th>
+                            <th style="width: 100px;">备注</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr ng-repeat="x in select_all_formwork_info | filter:query">
+                            <!--ng-click="show3D(x.f_id)"-->
+                            <!--<td>{{$index+1}}</td>
+                            <td>{{x.number}}</td>
+                            <td>{{x.component_type}}</td>
+                            <td>无</td>
+                            <td>未打印</td>
+                            <td>无法打印</td>-->
+
+                            <td>{{$index+1}}</td>
+                            <td>{{x.number}}</td>
+                            <td>{{x.component_type}}</td>
+                            <td>{{x.f_id}}</td>
+                            <td ng-if="x.isscanned == '1' || x.ispackaged=='1'">
+                                <span class="label label-sm label-success">已扫描</span>
+                                <span ng-if="x.ispackaged=='1'" class="label label-sm label-success">已打包</span>
+                            </td>
+                            <td ng-if="x.isscanned == '0' && x.ispackaged=='0'"><span class="label label-sm label-warning">未扫描</span></td>
+                            <td data-toggle="modal" data-target="#modal-bz" ng-click="addBZ(x.f_id)"><input readonly="readonly" style="width: 100px;" value="{{x.remark}}"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="label label-primary">当前扫描中。。。</label>
+                    <iframe id="iframe1" name="viewer1" width="100%" height="600" scrolling="yes" frameBorder="0"
+                            src="/designPlatform/Application/Viewer/View/index.html"></iframe>
+                    <a class="btn btn-primary" href="http://120.25.74.178/controlPlatform_2/#/screen_4">返回</a>
+                    <!--<label class="label label-success">已打包</label>
+                    <iframe id="iframe2" name="viewer2" width="100%" height="300" scrolling="yes" frameBorder="0"
+                            src="/designPlatform/Application/Viewer/View/index.html"></iframe>-->
+                </div>
+                <div id="example1"></div>
+
+                <div id="modal-bz" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                     aria-hidden="true">
+                    <div class="modal-dialog" style="width:30%;margin-top: 8%;">
+                        <div class="modal-content" style="border-radius: 5px;">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x&nbsp;
+                                </button>
+                                <h2 class="blue bigger" style="text-align: center;">填写备注</h2>
+                            </div>
+
+                            <div class="modal-body overflow-visible">
+                                <div class="row" style="padding-top: 2%">
+                                    <label class="col-sm-4 col-sm-offset-1">备注:</label>
+                                    <input size="16" ng-model="dabaobz"
+                                           class="col-sm-5"
+                                    >
+                                </div>
+                            </div>
+                            <div class="modal-footer" style="text-align: center;">
+                                <button class="btn btn-success col-sm-offset-4" ng-click="updateRemark()"
+                                        data-dismiss="modal">保存
+                                </button>
+                                <button class="btn btn-primary" data-dismiss="modal">返回
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+

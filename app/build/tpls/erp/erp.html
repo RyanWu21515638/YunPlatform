@@ -1,0 +1,199 @@
+<div style="padding-top: 5%" ng-controller="AuthorCtrl">
+    <div class="col-md-2  animated fadeInLeft" style="padding-left: 5%">
+        <ul class="nav nav-tabs nav-stacked" data-offset-top="125" id="accordion">
+            <li class="active">
+                <a ng-if="erp_group == 1" data-toggle="collapse" href="" data-parent="#accordion"
+                   data-target="#collapseOne">系统管理<b class="caret"></b></a>
+                <a href="" ng-if="erp_group != 1" ng-click="jugeAuthor(1)">系统管理<b class="caret"></b></a>
+            </li>
+            <div id="collapseOne" class="panel-collapse collapse out">
+                <div class="panel-body">
+                    <a ui-sref="index.YErp.userinfo">员工信息管理</a>
+                </div>
+            </div>
+            <!--<li class="active"><a ng-if="erp_group == 1 || erp_group == 3  " href="" data-toggle="collapse" data-parent="#accordion"
+                                  data-target="#collapseSix">
+                设计管理<b class="caret"></b>
+            </a>
+                <a href="" ng-if="erp_group == 4 || erp_group == 5 || erp_group == 6 ||erp_group==2"  ng-click="jugeAuthor(5)">
+                    设计管理<b class="caret"></b>
+                </a></li>
+
+            <div id="collapseSix" class="panel-collapse collapse">
+
+            </div>-->
+
+            <li class="active"><a ng-if="erp_group == 1 || erp_group == 2 || erp_group == 4 " href="" data-toggle="collapse" data-parent="#accordion"
+                                  data-target="#collapseTwo">
+                生产流程管理<b class="caret"></b>
+            </a>
+                <a href="" ng-if="erp_group == 3 || erp_group == 5 || erp_group == 6"  ng-click="jugeAuthor(2)">
+                    生产流程管理<b class="caret"></b>
+                </a></li>
+            <div id="collapseTwo" class="panel-collapse collapse out">
+                <div class="panel-body">
+                    <a ui-sref="index.YErp.designmng">生产清单导入</a>
+                </div>
+                <div class="panel-body">
+                    <a ui-sref="index.YErp.highchart">生产看板</a>
+                </div>
+                <div class="panel-body">
+                    <a ui-sref="index.YErp.taskallocated">生产计划</a>
+
+                </div>
+                <div class="panel-body">
+                    <a data-toggle="collapse" data-parent="#collapseTwo"
+                       data-target="#collapseTwoTwo">
+                        生产工序<b class="caret"></b>
+                    </a>
+                </div>
+                <div id="collapseTwoTwo" class="panel-collapse collapse">
+                    <div class="panel-body">
+                        <a ui-sref="index.YErp.cut">开料</a>
+                    </div>
+                    <div class="panel-body">
+                        <a ui-sref="index.YErp.punchinginfo">冲孔</a>
+                    </div>
+                    <div class="panel-body">
+                        <a ui-sref="index.YErp.jointinginfo">焊接</a>
+                    </div>
+                    <div class="panel-body">
+                        <a ui-sref="index.YErp.package">分料</a>
+                    </div>
+                </div>
+            </div>
+            <li class="active"><a ng-if="erp_group == 1 || erp_group == 5"  href="" data-toggle="collapse" data-parent="#accordion"
+                                  data-target="#collapseFour">
+                仓储管理<b class="caret"></b>
+                <a href="" ng-if="erp_group !=1  && erp_group != 5" ng-click="jugeAuthor(3)">
+                    仓储管理<b class="caret"></b>
+                </a>
+            </a></li>
+            <div id="collapseFour" class="panel-collapse collapse">
+                <div class="panel-body">
+                    <a ui-sref="index.YErp.kboard">卡板管理</a>
+                </div>
+                <div class="panel-body">
+                    <a ui-sref="index.YErp.inout_storage">成品出入库</a>
+                </div>
+                <div class="panel-body">
+                    <a ui-sref="index.YErp.inventory">盘点</a>
+                </div>
+            </div>
+            <li class="active"><a ng-if="erp_group ==1  || erp_group == 6" href="" data-toggle="collapse" data-parent="#accordion"
+                                  data-target="#collapseFive">
+                免预拼装<b class="caret"></b>
+            </a>
+                <a href="" ng-if="erp_group !=1  && erp_group != 6" ng-click="jugeAuthor(4)">
+                    免预拼装<b class="caret"></b>
+                </a></li>
+            <div id="collapseFive" class="panel-collapse collapse">
+               <!-- <div class="panel-body">
+                    <a ui-sref="index.YErp.qualityinfo">质检</a>
+                </div>-->
+                <div class="panel-body">
+                    <a ui-sref="index.YErp.packageinfo">打包</a>
+                </div>
+            </div>
+        </ul>
+        <!--<div class="panel-group" id="accordion">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <a data-toggle="collapse" data-parent="#accordion"
+                           data-target="#collapseOne">
+                            系统管理
+                        </a>
+                    </h4>
+                </div>
+                <div id="collapseOne" class="panel-collapse collapse out">
+                    <div class="panel-body">
+                        员工信息管理
+                    </div>
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <a data-toggle="collapse" data-parent="#accordion"
+                           data-target="#collapseTwo">
+                            生产流程管理
+                        </a>
+                    </h4>
+                </div>
+                <div id="collapseTwo" class="panel-collapse collapse in">
+                    <div class="panel-body">
+                        <a ui-sref="index.YErp.highchart">生产看板</a>
+
+                    </div>
+                    <div class="panel-body">
+                        <a ui-sref="index.YErp.taskallocated">生产计划</a>
+
+                    </div>
+                    <div class="panel-body">
+                        <a data-toggle="collapse" data-parent="#collapseTwo"
+                           data-target="#collapseTwoTwo">
+                            生产工序
+                        </a>
+                    </div>
+                    <div id="collapseTwoTwo" class="panel-collapse collapse">
+                        <div class="panel-body" >
+                            <a ui-sref="index.YErp.cut">开料</a>
+                        </div>
+                        <div class="panel-body">
+                            冲孔
+                        </div>
+                        <div class="panel-body">
+                            焊接
+                        </div>
+                        <div class="panel-body">
+                            分料
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <a data-toggle="collapse" data-parent="#accordion"
+                           data-target="#collapseThree">
+                            免预拼装
+                        </a>
+                    </h4>
+                </div>
+                <div id="collapseThree" class="panel-collapse collapse">
+                    <div class="panel-body">
+                        质检
+                    </div>
+                    <div class="panel-body">
+                        打包
+                    </div>
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <a data-toggle="collapse" data-parent="#accordion"
+                           data-target="#collapseFour">
+                            仓储管理
+                        </a>
+                    </h4>
+                </div>
+                <div id="collapseFour" class="panel-collapse collapse">
+                    <div class="panel-body">
+                        <a ui-sref="index.YErp.kboard">卡板管理</a>
+                    </div>
+                    <div class="panel-body">
+                        <a ui-sref="index.YErp.inout_storage">成品出入库</a>
+                    </div>
+                    <div class="panel-body">
+                        <a ui-sref="index.YErp.inventory">盘点</a>
+                    </div>
+                </div>
+            </div>
+        </div>-->
+    </div>
+    <div class="col-md-9">
+        <div ui-view=""></div>
+    </div>
+</div>

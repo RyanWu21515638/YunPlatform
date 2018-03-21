@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <!-- attach CSS styles -->
+    <!--<link href="css/bootstrap.min.css" rel="stylesheet">-->
+    <style type="text/css">
+        .fixed {
+            position: fixed;
+            left: 93%;
+            top: 80%;
+        }
+    </style>
+</head>
+<body >
+
+<div class="fixed" ng-controller="homeCtrl">
+    <table>
+        <tbody>
+        <tr>
+            <td><a target="_blank" href="http://wpa.qq.com/msgrd?v=3&uin=501705594&site=qq&menu=yes">
+                <img border="0"
+                     src="http://wpa.qq.com/pa?p=2:501705594:41"
+                     alt="点击这里给我发消息">
+                </a>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <button id="upbtn" type="button" class="btn btn-info col-md-12" ng-click="scrollup()"><span class="glyphicon glyphicon-chevron-up"></span></button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<div ng-controller="homeCtrl">
+    <!-- first section - Home -->
+    <div id="home" class="home animated bounceInUp">
+        <div class="text-vcenter">
+            <h1>Hello RiLiYun!</h1>
+            <h3>欢迎访问鈤励铝模云平台<br/></h3>
+            <!--<a class="btn btn-warning btn-lg" ng-click="p()"><span class="glyphicon glyphicon-hand-down"></span> 继续了解</a>-->
+            <a href="" class="hero-btn" ng-click="p()" style="position: relative"><span
+                    class="glyphicon glyphicon-hand-down"></span>继续了解</a>
+        </div>
+
+    </div>
+
+
+    <!-- /first section -->
+    <!--<div class="banner">
+        <ul>
+            <li style="background-image: url('app/build/image/02.jpg');">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-6 col-md-offset-3">
+                            <div class="hero-title">
+                                CUTTING EDGE WP BUSINESS THEME
+                            </div>
+                            <p class="hero-content">Gutful of bottlo no dramas he's got a massive hooroo.</p>
+                            <a href="#" class="hero-btn">BUY IT NOW</a>
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <li style="background-image: url('app/build/image/02.jpg');">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-6 col-md-offset-3">
+                            <div class="hero-title">
+                                VERY PHOTO, SUCH WAVES, WOW.
+                            </div>
+                            <p class="hero-content">A very artsy photo with waves crashing over rocks. So /emosh.</p>
+                            <a href="#" class="hero-btn">BEER ME!</a>
+                        </div>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>-->
+
+
+    <!-- second section - About -->
+    <div class="container carousel">
+        <div id="about" class="pad-section animated fadeInLeft">
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <img src="app/build/image/logo.png" style="width: 20%;height: 20%" alt=""/>
+                    </div>
+                    <div class="col-sm-6 text-center">
+                        <h1>我们的服务</h1>
+                        <h2>更快、 更准、 更专业</h2>
+                        <p class="lead">Faster Accurate Professional</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--<h2 class="text-center">我们的服务</h2> <hr />-->
+        <div class="row animated fadeInRight">
+
+            <div class="col-md-3" ui-sref="index.compare.oldlist">
+                <div class="ca-hover">
+                    <div class="carousel-img">
+                        <img src="app/build/image/c01.jpg" alt="Carousel Img">
+                    </div>
+                    <div class="carousel-avatar av1">
+                    </div>
+                    <div class="carousel-content">
+                        <h3>小工具</h3>
+                        <p>模板仓库、算量</p>
+                    </div>
+                    <div class="overlay"></div>
+                </div>
+            </div>
+
+            <div class="col-md-3" ui-sref="index.P_formwork.stairs">
+                <div class="ca-hover">
+                    <div class="carousel-img">
+                        <img src="app/build/image/c02.jpg" alt="Carousel Img">
+                    </div>
+                    <div class="carousel-avatar av2">
+                    </div>
+                    <div class="carousel-content">
+                        <h3>云配模</h3>
+                        <p>楼梯配模、三维模型、VR</p>
+                    </div>
+                    <div class="overlay"></div>
+                </div>
+            </div>
+
+            <div class="col-md-3" ui-sref="index.YErp.highchart">
+                <div class="ca-hover">
+                    <div class="carousel-img">
+                        <img src="app/build/image/c03.jpg" alt="Carousel Img">
+                    </div>
+                    <div class="carousel-avatar av3">
+                    </div>
+                    <div class="carousel-content">
+                        <h3>云ERP</h3>
+                        <p>生产流程管理、免预拼装、仓储管理</p>
+                    </div>
+                    <div class="overlay"></div>
+                </div>
+            </div>
+
+            <div class="col-md-3" ui-sref="index.order.allorder">
+                <div class="ca-hover">
+                    <div class="carousel-img">
+                        <img src="app/build/image/c04.jpg" alt="Carousel Img">
+                    </div>
+                    <div class="carousel-avatar av4">
+                    </div>
+                    <div class="carousel-content">
+                        <h3>我的订单</h3>
+                        <p>可下载清单、加工图</p>
+                    </div>
+                    <div class="overlay"></div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <br><br><br><br><br><br>
+
+
+    <br><br><br><br><br><br>
+
+    <!-- /second section -->
+
+    <!-- third section - Services -->
+    <!--<div id="services" class="pad-section">
+        <div class="container">
+            <div class="row text-center">
+                <div class="col-sm-3 col-xs-6">
+                    <i class="glyphicon glyphicon-cloud"> </i>
+                    <h4>Service 1</h4>
+                    <p>楼梯云配模</p>
+                </div>
+                <div class="col-sm-3 col-xs-6">
+                    <i class="glyphicon glyphicon-leaf"> </i>
+                    <h4>Service 2</h4>
+                    <p>鈤励云ERP</p>
+                </div>
+                <div class="col-sm-3 col-xs-6">
+                    <i class="glyphicon glyphicon-phone-alt"> </i>
+                    <h4>Service 3</h4>
+                    <p>IPM一对一培训</p>
+                </div>
+                <div class="col-sm-3 col-xs-6">
+                    <i class="glyphicon glyphicon-bullhorn"> </i>
+                    <h4>Service 4</h4>
+                    <p>旧模周转</p>
+                </div>
+            </div>
+        </div>
+    </div>-->
+    <!-- /third section -->
+
+    <!-- fourth section - Information -->
+    <!--<div id="information" class="pad-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h2 class="panel-title">主营业务</h2>
+                        </div>
+                        <div class="panel-body lead" style="letter-spacing: 2px">
+                            <h4>&nbsp;&nbsp;&nbsp;&nbsp;深圳市鈤励科技有限公司致力于建筑行业的专业软件开发和工程项目咨询服务。目前专注于建筑施工阶段模板脚手架行业的软件二次开发及相关技术应用。希望通过开发适用于行业特点的专业平台和提供满足客户企业需求的高端定制服务的一体化BIM服务方案，能迅速提高用户技术水平和优化工作流程，大幅提升准确率和工作效率，降低成本。</h4>
+                            <h3>&nbsp;&nbsp;&nbsp;&nbsp;公司主营业务包括：</h3>
+                            &nbsp;&nbsp;&nbsp;&nbsp;铝模软件iPM+设计外包+项目开发一体化咨询服务<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;BIM软件开发及相关技术咨询服务<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;CAD、Revit、Takla、Solidworks等平台二次开发<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;建筑工业化软件定制及企业ERP应用服务和行业VR服务开发平台等<br>
+
+                            <h4>&nbsp;&nbsp;&nbsp;&nbsp;公司团队由三十多个软件开发人员和工程人员组成，经验丰富，敢于创新，完成多项产品开发和工程项目，参编《铝合金模板》等国家标准，拥有多项发明专利和软件著作权。
+                            鈤励科技将竭力以极致的产品和优质的服务助力行业发展，与广大用户和客户共创美好未来！</h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="panel panel-default" style="height: 593px">
+                        <div class="panel-heading">
+                            <h2 class="panel-title">楼梯配模</h2>
+                        </div>
+                        <div class="panel-body lead" style="letter-spacing: 2px;">
+
+                            只要您在我们鈤励云配模平台上传一份楼梯图纸文件生成订单，在1-5工作小时之内，我们将为您全自动配模生成三维模型、加工图、清单等，并且在您完成付款之后可随时下载这些文件。
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>-->
+    <!-- /fourth section -->
+
+    <!-- fifth section -->
+
+    <!-- /fifth section -->
+
+    <!-- google map -->
+    <!--<div id="google_map"></div>-->
+    <!-- /google map -->
+
+    <!-- footer -->
+    <footer>
+        <hr/>
+        <div class="container"><!--
+        <p class="text-right" style="color: #888;">Copyright &copy; rili.tech 2015</p>-->
+            <div class="col-md-6">
+                <div class="links">
+                    <a rel="nofollow" target="_blank" href="http://www.rili.tech/">
+                        关于我们
+                    </a>
+                    &nbsp;|&nbsp;
+                    <a rel="nofollow" target="_blank" href="">
+                        联系我们
+                    </a>
+                    &nbsp;|&nbsp;
+                    <a rel="nofollow" target="_blank" href="">
+                        人才招聘
+                    </a>
+                    &nbsp;|&nbsp;
+                    <a rel="nofollow" target="_blank" href="">
+                        商家入驻
+                    </a>
+                    &nbsp;|&nbsp;
+                    <a rel="nofollow" target="_blank" href="">
+                        广告服务
+                    </a>
+                    &nbsp;|&nbsp;
+                    <a target="_blank" href="">
+                        友情链接
+                    </a>
+                    &nbsp;|&nbsp;
+                    <a target="_blank" href="">
+                        销售联盟
+                    </a>
+                    &nbsp;|&nbsp;
+                    <a target="_blank" href="" clstag="pageclick|keycount|20150112ABD|9">English Site</a>
+
+                </div>
+
+
+                <div class="copyright">
+                    <p style="color: #888;">Copyright&nbsp;&copy;&nbsp;2015-2017&nbsp;&nbsp;深圳市鈤励科技有限公司rili.tech&nbsp;版权所有</p>
+
+                </div>
+
+              <!--  <a target="_blank" href="http://wpa.qq.com/msgrd?v=3&uin=501705594&site=qq&menu=yes"><img border="0"
+                                                                                                          src="http://wpa.qq.com/pa?p=2:501705594:41"
+                                                                                                          alt="点击这里给我发消息"
+                                                                                                      title="点击这里给我发消息"/></a>-->
+            </div>
+            <div class="col-sm-3 col-xs-8">
+                <img border="0" src="app/build/image/WeChat_QR.jpg" alt="" title="扫码关注我们" style="width: 30%;">
+                <p style="color: #888;">鈤励科技微信公众号</p>
+            </div>
+            <div class="col-sm-3 col-xs-8">
+                <img border="0" src="app/build/image/QQ_QR.png" alt="" title="扫码加入i配模交流群" style="width: 30%;">
+                <p style="color: #888;">i配模QQ交流群</p>
+            </div>
+        </div>
+
+    </footer>
+    <!-- /footer -->
+
+    <!-- attach JavaScripts -->
+    <!--<script src="js/jquery-1.10.2.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/main.js"></script>-->
+</div>
+</body>
+</html>

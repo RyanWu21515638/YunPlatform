@@ -1,0 +1,159 @@
+<style>
+    iframe.fixed {
+        position: fixed;
+        left: 55%;
+        top: 58%;
+        height: 40%;
+    }
+
+    div.fixed {
+        position: fixed;
+        left: 55%;
+        top: 15%;
+        height: 40%;
+    }
+</style>
+
+<div class="main-container" ng-controller="ErpCtrl" ng-click="scrollon()" style="padding-left: 2%">
+
+    <div class="main-container-inner">
+        <div class="space-24"></div>
+        <div class="page-content">
+            <div class="page-header">
+                <h3>
+                    <!--<i class="icon-spinner icon-spin orange bigger-125"></i>-->
+                    <b>开料</b>
+                </h3>
+                <!-- <button class="col-md-1 pull-right" ng-click="printsetting()">打印机设置</button> -->
+            </div>
+            <form class="form-horizontal" role="form">
+                <div class="form-group">
+                    <label class="col-md-1 control-label">请选择项目:</label>
+                    <div class="col-md-2">
+                        <select id="inputprj" style="width: 100%" ng-model="project" ng-change="cutselect(project)"
+                                ng-options="pr.id as pr.name for pr in prj" ng-disabled="!inputprj">
+                            <option value="">--请选择项目--</option>
+                        </select>
+                    </div>
+                    <div id="bcTarget"></div>
+                </div>
+            </form>
+            <div class="row" id="tb1" style="display: none;">
+                <div class="table-responsive col-md-6">
+                    <div class="panel-heading" style="background-color: navajowhite;">
+
+                        <form class="form-horizontal" role="form">
+                            <div>
+                                <h3 class="panel-title">开料清单</h3>
+                            </div>
+                        </form>
+                    </div>
+
+                    <table id="table3" class="table table-bordered table-hover">
+                        <thead>
+                        <tr>
+                            <th width="30%" colspan="2">合计</th>
+                            <th width="7%">{{num}}</th>
+                            <th width="15%" class="center">{{ion}}</th>
+                            <th width="15%" class="center">
+                                {{num-ion}}
+                            </th>
+                            <th width="15%" class="center" rowspan="2">操作</th>
+                            <th width="5%" class="center" rowspan="2"><button ng-if="1" data-toggle="modal"
+                                                    data-target="#modal-form1" ng-click="printTENs()">打印(≤10张)
+                            </button>
+                            </th>
+                        </tr>
+                        <tr>
+                            <th width="10%">序号</th>
+                            <th width="20%">模板型号</th>
+                            <th width="7%">数量</th>
+                            <th width="15%" class="center">
+                                <input type="checkbox" ng-model="cutchecked">
+                                已开料
+                            </th>
+                            <th width="15%" class="center">
+                                <input type="checkbox" ng-model="cutcheck">
+                                未开料
+                            </th>
+                        </tr>
+
+                        </thead>
+                        <tbody ng-repeat="x in cutinfoo | filter:query" ng-init="p_index=$index+1;p_number=x.number">
+                        <tr id="$index">
+                            <td class="center">
+                                {{$index+1}}
+                            </td>
+                            <td>{{x.number}}</td>
+                            <td>{{x.num}}</td>
+                            <td class="center">
+                                {{x.ion}}
+                            </td>
+                            <td class="center">
+                                {{x.num-x.ion}}
+                            </td>
+                            <td width="10%" class="center" ng-click="x.$tablechild=!x.$tablechild;cutdt($index)"
+                                ng-init="x.$tablechild = true">
+                                <i ng-if="(x.$tablechild)" class="icon-plus" ></i>
+                                <i ng-if="(!x.$tablechild)" class="icon-minus"></i>
+                            </td>
+                            <td></td>
+                        </tr>
+                        <span>
+                            <tr style="background-color: papayawhip" ng-repeat="y in x.data"
+                                ng-if=!x.$tablechild&&((printbl1[y.id]=='1'&&cutchecked)||(printbl1[y.id]=='0'&&cutcheck))>
+                                <td class="center">{{p_index}}.{{$index+1}}</td>
+                                <td>{{p_number}}(id:{{y.id}})</td>
+                                <td>1
+                                </td>
+                                <td class="center">
+                                    <i ng-if="printbl1[y.id] == '1'" class="icon-ok bigger-140 green" style="color: green"></i>
+                                </td>
+                                <td class="center">
+                                    <i ng-if="printbl1[y.id] == '0'" class="icon-remove bigger-140 red" style="color: red"></i>
+                                </td>
+                                <td class="center">
+                                    <button class="btn-danger" ng-click="cutrecord(y.id,p_index,p_number,y.name);">打印</button>
+                                    <button class="btn-app" ng-click="resetrecord(y.id,p_index);">重置</button>
+                                    </td>
+                                <td class="center" ng-click="printselect(y.id)"><input type="checkbox" ng-checked="cutchosen[y.id]">
+                                    <button ng-if="($index+1)==x.data.length" ng-click="x.$tablechild=!x.$tablechild;"><i class="icon-arrow-up icon-only bigger-110"></i></button>
+                                </td>
+                            </tr>
+                            <tr style="background-color: papayawhip" ng-repeat="y in x.data"
+                                ng-show=!x.$tablechild&&!cutchecked&&!cutcheck>
+                                <td class="center">{{p_index}}.{{$index+1}}</td>
+                                <td>{{p_number}}(id:{{y.id}})</td>
+                                <td>1
+                                </td>
+                                <td class="center">
+                                    <i ng-show="printbl1[y.id] == '1'" class="icon-ok bigger-140" style="color: green"></i>
+                                </td>
+                                <td class="center">
+                                    <i ng-show="printbl1[y.id] == '0'" class="icon-remove bigger-140" style="color: red"></i>
+                                </td>
+                                <td class="center">
+                                    <button  class="btn-danger" ng-click="cutrecord(y.id,p_index,p_number,y.name);">打印</button>
+                                    <button  class="btn-app" ng-click="resetrecord(y.id,p_index);">重置</button>
+                                </td>
+                                <td class="center" ng-click="printselect(y.id)"><input type="checkbox" ng-checked="cutchosen[y.id]">
+                                    <button ng-if="($index+1)==x.data.length" ng-click="x.$tablechild=!x.$tablechild;"><i class="icon-arrow-up icon-only bigger-110"></i></button>
+                                </td>
+                            </tr>
+                        </span>
+
+
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="col-md-6" id="fix1" style="display: none">
+                    <div class="col-lg-5 col-md-5 fixed" id="example1"></div>
+                    <iframe class="fixed" id="iframe1" name="viewer1" width="38%" scrolling="yes"
+                            src="/rlerp/Application/Viewer/View/index.html"></iframe>
+                </div>
+            </div>
+
+        </div><!--pagecontent-->
+    </div><!-- main-container-inner-->
+</div>

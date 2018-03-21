@@ -1,0 +1,103 @@
+<style>
+    .my-drop-zone { border: dotted 3px lightgray; }
+    .nv-file-over { border: dotted 3px red; } /* Default class applied to drop zones on over */
+
+</style>
+<div class="page-header">
+    <h3>
+        <!--<i class="icon-spinner icon-spin orange bigger-125"></i>-->
+        <b>我的vr</b>
+    </h3>
+</div>
+<div class="col-md-10 animated fadeInRight">
+    <div class="panel panel-danger col-md-5">
+        <div class="panel-heading text-center ">
+            <h3 class="panel-title">
+                上传文件要求
+            </h3>
+        </div>
+        <div class="panel-body">
+            1、图纸文件格式要求为AutoCAD.dwg 文件格式
+            <hr>
+            2、目前仅支持鈤励科技i配模的DWG图纸文件
+            <hr>
+            3、如果有多个文件，请打包成一个压缩文件再上传，否则将只识别最后上传的文件
+        </div>
+    </div>
+    <div class="col-md-6"  >
+        <a href="app/build/image/vr.jpg" download="楼梯底图样例"><img src="app/build/image/vr.jpg" style="width: 160%;height: 300px" title="点击可下载图片"></a>
+
+    </div>
+</div>
+<div style="padding-top: 1%;padding-bottom: 10%" class="col-md-10 animated fadeInUp"nv-file-drop=""
+     uploader="uploader" >
+    <div class="row">
+
+            <h3>上传单个文件</h3>
+
+        <div class="well my-drop-zone" nv-file-over="" uploader="uploader" ng-click="uploader.clearQueue()" style="height: 100px">
+            <h3 style="color: red">请将要上传的压缩文件或者dwg文件拖拽至此（单击此区域可以移除添加的上一个文件）</h3>
+        </div>
+            <!--<input type="file" nv-file-select="" uploader="uploader" ng-click="uploader.clearQueue()"/>-->
+
+            <h3>上传状态</h3>
+            <p>队列长度: {{ uploader.queue.length }}</p>
+
+            <table class="table">
+                <thead>
+                <tr>
+                    <th width="50%">文件名</th>
+                    <th ng-show="uploader.isHTML5">大小</th>
+                    <th ng-show="uploader.isHTML5">进度</th>
+                    <th>状态</th>
+                    <th>操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="item in uploader.queue">
+                    <td><strong>{{ item.file.name }}</strong></td>
+                    <td ng-show="uploader.isHTML5" nowrap>{{ item.file.size/1024/1024|number:2 }} MB</td>
+                    <td ng-show="uploader.isHTML5">
+                        <div class="progress" style="margin-bottom: 0;">
+                            <div class="progress-bar" role="progressbar"
+                                 ng-style="{ 'width': item.progress + '%' }"></div>
+                        </div>
+                    </td>
+                    <td class="text-center">
+                        <span ng-show="item.isSuccess"><i class="glyphicon glyphicon-ok"></i></span>
+                        <span ng-show="item.isCancel"><i class="glyphicon glyphicon-ban-circle"></i></span>
+                        <span ng-show="item.isError"><i class="glyphicon glyphicon-remove"></i></span>
+                    </td>
+                    <td nowrap>
+                        <!--data-toggle="modal" data-target="#modal-form"-->
+                        <button type="button" class="btn btn-success btn-xs"  ng-click="item.upload()"
+                                ng-disabled="item.isReady || item.isUploading || item.isSuccess">
+                            <span class="glyphicon glyphicon-upload"></span> 上传
+                        </button>
+                        <button type="button" class="btn btn-warning btn-xs" ng-click="item.cancel()"
+                                ng-disabled="!item.isUploading">
+                            <span class="glyphicon glyphicon-ban-circle"></span> 取消
+                        </button>
+                        <button type="button" class="btn btn-danger btn-xs" ng-click="item.remove()">
+                            <span class="glyphicon glyphicon-trash"></span> 移除
+                        </button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+            <br>
+            <div class="row col-md-3 col-md-offset-9" style="padding-top: 6%;">
+                <label class="col-md-3" >备注:</label>
+                <textarea class="col-md-9" ng-model="order_info.remark" style="height: 100px"></textarea>
+            </div>
+            <div class="row pull-right" style="padding-top: 2%">
+                <label>付款之后可下载所有生成的清单、加工图，立面图</label>
+                <br>
+                <button class="btn btn-danger pull-right" ng-click="submit_order(3);">提交订单</button><!--uploader.uploadAll()-->
+
+                <!-- <a href="/angular-file-upload-master/examples/simple/uploads/12.png" download="w3logo">下载</a>-->
+            </div>
+
+    </div>
+</div>

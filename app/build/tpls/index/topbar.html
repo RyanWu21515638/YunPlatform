@@ -1,0 +1,100 @@
+<style>
+    .navbar-default .navbar-nav > li > a {
+        color: #555;
+    }
+
+    .navbar-default .navbar-nav > .active > a,
+    .navbar-default .navbar-nav > .active > a:hover,
+    .navbar-default .navbar-nav > .active > a:focus {
+        color: #38b5c9;
+        background-color: #fff;
+
+    }
+
+    .navbar-default {
+        background-color: #fff;
+        padding: 4px 0;
+        box-shadow: 0 0 3px #ccc;
+        font-weight: 500;
+    }
+
+    .navbar-default .navbar-brand {
+        font-weight: 700;
+        font-size: 26px;
+        color: #666;
+    }
+
+    .navbar-brand .fa {
+        color: #38b5c9;
+    }
+
+    .navbar-toggle {
+        border-color: transparent;
+        border: 0px solid transparent;
+    }
+
+    .navbar-default .navbar-nav > li > a:hover, .navbar-default .navbar-nav > li > a:focus {
+        background-color: #e7e7e7;
+    }
+</style>
+
+<div class="navbar navbar-default navbar-fixed-top" role="navigation" ng-controller="indexCtrl">
+    <div class="container-fluid">
+        <div class="navbar-header col-md-offset-1 animated" ng-if="!erp">
+            <a class="navbar-brand" ui-sref="index" href="" style="outline:none;"><b>鈤励铝模云</b></a>
+        </div>
+        <div class="navbar-header col-md-offset-1 animated" ng-if="erp">
+            <a class="smoothScroll col-md-1" ui-sref="index" href="" ng-click="hideerp()"><img src="app/build/image/logo.jpg"></a>
+            <a class="navbar-brand col-md-offset-5" ui-sref="index.YErp.userinfo" href=""><b>云ERP</b></a>
+        </div>
+        <div class="navbar-collapse collapse col-md-offset-3">
+            <ul class="nav navbar-nav col-md- col-sx-7 col-md-offset-1" ng-if="erp">
+            <!-- <li><label style="text-align: center;">请在IE9.0或IE9.0以上版本的浏览器中使用ERP</label></li> -->
+            </ul>
+            <ul class="nav navbar-nav col-md- col-sx-7 col-md-offset-1" ng-if="!erp">
+                <li><a ui-sref="index.compare.oldlist" style="outline:none;">小工具</a></li>
+                <li><a ui-sref="index.P_formwork.stairs" style="outline:none;" ng-if="logged">云配模</a></li>
+                <li><a href="" ng-click="erpjuge()" style="outline:none;" ng-if="logged">云ERP</a></li>
+                <li><a ui-sref="index.order.allorder" style="outline:none;" ng-if="logged">我的订单</a></li>
+                <li ng-if="loggedgroup == '777'" style="outline:none;"><a ui-sref="index.YPfMng.allorder">管理者平台</a></li>
+            </ul>
+            <ul class="nav navbar-nav col-md-4 pull-right">
+                <li ng-if="!logged"><a ui-sref="login">登录</a></li>
+                <li ng-if="logged">
+                    <a data-toggle="dropdown" class="dropdown-toggle" href="">
+                        <img class="nav-user-photo" src="app/build/image/logo.jpg"
+                             alt="{{loggedname}}" style="border-radius: 50%;width: 50px;"/>
+                        <i class="icon-caret-down"></i>
+                    </a>
+                    <ul class="user-menu pull-right dropdown-menu dropdown-yellow dropdown-caret dropdown-close">
+                        <li>
+                            <a ui-sref="rstpw">
+                                <i class="icon-user"></i>
+                                修改密码
+                            </a>
+                        </li>
+
+                        <li>
+                            <a ui-sref="upgradeUser">
+                                <i class="icon-double-angle-up"></i>
+                                升级为企业用户
+                            </a>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+
+                        <li>
+                            <a ui-sref="login" ng-click="logout()">
+                                <i class="icon-off"></i>
+                                退出
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+				<!--<li class="nav navbar-nav" ng-if="logged"><a style="outline:none;"><label>您的试用期还剩{{trial}}天</label></a></li>
+-->
+            </ul>
+        </div>
+    </div>
+</div>
+

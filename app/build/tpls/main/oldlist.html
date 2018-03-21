@@ -1,0 +1,95 @@
+<div class="main-container" ng-controller="compareCtrl">
+    <div class="main-container-inner">
+        <div class="page-content">
+            <div class="page-header">
+                <h3>
+                    <!--<i class="icon-spinner icon-spin orange bigger-125"></i>-->
+                    <b>模板清单导入</b>
+
+                </h3>
+                <h4>将清单导入模板仓库(选择文件之后，点击“导入清单按钮即可”)，一次只能导入一个excel文件</h4>
+            </div>
+
+            <div class="row animated fadeInRight">
+                <form class="col-md-6" action="http://120.25.74.178/designPlatform/home/excel/impExcel"
+                      enctype="multipart/form-data" method="post">
+
+                    <input type="file" name="import"/>
+                    <input type="hidden" name="user_id" value="{{userinfo.user_id}}">
+                    <input type="submit" value="导入清单">
+                </form>
+                <button class="" ng-click="exportToExcel(1)">导出excel</button>
+                <button class="" ng-click="storage_clear_post()">清空库存</button>
+            </div>
+            <div class="col-md-7 table-responsive animated fadeInUp">
+                <table class="table table-bordered table-hover table2excel">
+                    <thead>
+                    <tr>
+                        <th class="text-center" colspan="6"><h5><b>库存清单</b></h5></th>
+                    </tr>
+                    <tr>
+                        <th class="center">序号</th>
+                        <th>规格名称</th>
+                        <th>小计</th>
+                        <th>单个面积</th>
+                        <th>库存总面积</th>
+                    </tr>
+
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="x in formwork_storage">
+                        <td>{{$index+1}}</td>
+                        <td>{{x.name}}</td>
+                        <td>{{x.subtotal}}</td>
+                        <td>{{x.area}}</td>
+                        <td>{{x.sum_area}}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-md-3 col-md-offset-1 table-responsive animated fadeInRight">
+                <table class="table table-bordered table-hover">
+                    <thead>
+                    <tr>
+                        <th class="text-center" colspan="6"><h5><b>导入的清单抬头规则和格式示例</b></h5></th>
+                    </tr>
+                    <tr>
+                        <th class="text-center">规格名称</th>
+                        <th class="text-center">小计</th>
+                        <th class="text-center">单个面积</th>
+                        <th class="text-center">总面积</th>
+                    </tr>
+
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td class="text-center">100 W 2700</td>
+                        <td class="text-center">10</td>
+                        <td class="text-center">0.27</td>
+                        <td class="text-center">2.7</td>
+                    </tr>
+                    <tr>
+                        <td class="text-center">200 W 2700</td>
+                        <td class="text-center">5</td>
+                        <td class="text-center">0.54</td>
+                        <td class="text-center">2.7</td>
+                    </tr>
+                    <tr>
+                        <td class="text-center">300 W 2700</td>
+                        <td class="text-center">4</td>
+                        <td class="text-center">0.81</td>
+                        <td class="text-center">3.24</td>
+                    </tr>
+                    <tr>
+                        <td class="text-center">400 W 2700</td>
+                        <td class="text-center">4</td>
+                        <td class="text-center">1.08</td>
+                        <td class="text-center">4.32</td>
+                    </tr>
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

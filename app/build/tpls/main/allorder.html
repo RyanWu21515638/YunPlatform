@@ -1,0 +1,190 @@
+
+<div class="main-container" >
+    <div class="main-container-inner">
+        <div class="page-content">
+            <div class="page-header">
+                <h3>
+                    <!--<i class="icon-spinner icon-spin orange bigger-125"></i>-->
+                    <b>我的订单</b>
+                </h3>
+            </div>
+            <div class="col-md-12">
+                <ul class="nav nav-tabs" id="myTab" ng-init="worktype=1;">
+                    <li class="active">
+                        <a data-toggle="tab" data-target="#all" href="">
+                            <i class="green icon-home bigger-110"></i>
+                            全部订单
+                        </a>
+                    </li>
+
+                    <li>
+                        <a data-toggle="tab" data-target="#no_pay" href="">
+                            待付款
+                        </a>
+                    </li>
+                    <li>
+                        <a data-toggle="tab" data-target="#done_show" href="">
+                            待验收
+                        </a>
+                    </li>
+
+                    <li>
+                        <a data-toggle="tab" data-target="#done_evaluate" href="">
+                            待评价
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <div class="tab-content">
+                <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                                    &times;
+                                </button>
+                                <h4 class="modal-title" id="myModalLabel">
+                                    删除订单
+                                </h4>
+                            </div>
+                            <div class="modal-body">
+                                确认是否要删除这个订单吗？
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-primary" ng-click="delete_order()" data-dismiss="modal">
+                                    确定
+                                </button>
+                                <button type="button" class="btn btn-default" data-dismiss="modal">取消
+                                </button>
+                            </div>
+                        </div><!-- /.modal-content -->
+                    </div><!-- /.modal -->
+                </div>
+                <div id="all" class="tab-pane in active">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                            <th>订单详情</th>
+                            <th>文件名</th>
+                            <th>处理情况</th>
+                            <th>付款情况</th>
+                            <th>操作</th>
+                            </thead>
+                            <tbody>
+                            <tr ng-repeat="x in orderinfo">
+                                <td>
+                                    <span>{{x.update_time}}</span>
+                                <br>订单号：
+                                    <label>{{x.file}}</label>
+
+                                    <br>订单类型：
+                                    <span ng-if="x.type == 1">楼梯</span>
+                                    <span ng-if="x.type == 2">三维</span>
+                                    <span ng-if="x.type == 3">VR</span>
+                                </td>
+                                <td>{{x.origin_file}}</td>
+                                <td>
+                                    <span ng-if="x.deal_status == 0" class="label label-lg label-warning">未处理</span>
+                                    <span ng-if="x.deal_status == 1" class="label label-lg label-success">已处理</span>
+                                    <button ng-if="x.deal_status == 1 && x.type !=2 " ui-sref="index.order.orderdetail" ng-click="show3D(x.file,x.prj_id)">查看三维</button>
+                                </td>
+                                <td ng-if="x.type != 2"><span ng-if="x.pay_status == 0" class="label label-lg label-warning">未付款</span>
+                                    <span ng-if="x.pay_status == 1" class="label label-lg label-success">已付款</span>
+                                    <button ng-if="x.pay_status == 1"><a href="{{ip}}/designPlatform/uploads/{{x.file}}/output/{{x.file}}.zip"  download="">下载(清单、加工图)</a></button></td>
+                                <td ng-if="x.type == 2"><span ng-if="x.pay_status == 0" class="label label-lg label-warning">未付款</span>
+                                    <span ng-if="x.pay_status == 1" class="label label-lg label-success">已付款</span>
+                                    <button ng-if="x.pay_status == 1"><a href="{{ip}}/designPlatform/uploads/{{x.file}}/output/{{x.file}}.dwg"  download="">下载(清单、加工图)</a></button></td>
+                                <td><a ng-click="record_order_sn(x.file)" data-toggle="modal" data-target="#myModal">删除</a></td>
+<!--<td><a>删除</a></td>-->
+
+                            </tr>
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div id="no_pay" class="tab-pane">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                            <th>订单号</th>
+                            <th>文件名</th>
+                            <th>处理情况</th>
+                            <th>付款情况</th>
+                            <th>操作</th>
+                            <th>收款信息说明</th>
+                            </thead>
+                            <tbody>
+                            <tr ng-repeat=" x in orderinfo" ng-if="x.pay_status == 0">
+                                <td><label>{{x.file}}</label>
+                                    <br>订单时间<br>
+                                    <span>{{x.update_time}}</span>
+                                </td>
+                                <td>{{x.origin_file}}</td>
+                                <td>
+                                    <span ng-if="x.deal_status == 0" class="label label-lg label-warning">未处理</span>
+                                    <span ng-if="x.deal_status == 1" class="label label-lg label-success">已处理</span>
+                                    <button ng-if="x.deal_status == 1" ui-sref="index.order.orderdetail" ng-click="show3D(x.file,x.prj_id)">查看三维</button>
+                                </td>
+                                <td><span ng-if="x.pay_status == 0" class="label label-lg label-warning">未付款</span>
+                                    <span ng-if="x.pay_status == 1" class="label label-lg label-success">已付款</span>
+                                    <button ng-if="x.pay_status == 1"><a href="{{ip}}/designPlatform/uploads/{{x.file}}/output/{{x.file}}.zip"  download="">下载(清单、加工图)</a></button></td>
+                               <!-- <td><a ng-click="record_order_sn(x.file)" data-toggle="modal" data-target="#myModal">删除</a></td>-->
+							   <td><a>删除</a></td>
+                                <td>
+                                    户名：深圳市鈤励科技有限公司<br>
+                                    开户行：中国建设银行股份有限公司深圳水榭春天支行<br>
+                                    帐号：44201016900052511557<br>
+                                </td>
+                            </tr>
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div id="done_show" class="tab-pane">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                            <th>订单号</th>
+                            <th>文件名</th>
+                            <th>处理情况</th>
+                            <th>付款情况</th>
+                            <th>操作</th>
+
+                            </thead>
+                            <tbody>
+                            <tr ng-repeat=" x in orderinfo" ng-if="x.deal_status == 1">
+                                <td><label>{{x.file}}</label>
+                                    <br>订单时间:<br>
+                                    <span>{{x.update_time}}</span>
+                                    <br>订单类型:<br>
+                                    <span ng-if="x.type == 1">楼梯</span>
+                                    <span ng-if="x.type == 2">三维</span>
+                                    <span ng-if="x.type == 3">VR</span>
+                                </td>
+                                <td>{{x.origin_file}}</td>
+                                <td>
+                                    <span ng-if="x.deal_status == 0" class="label label-lg label-warning">未处理</span>
+                                    <span ng-if="x.deal_status == 1" class="label label-lg label-success">已处理</span>
+                                    <button ng-if="x.deal_status == 1 && x.type !=2" ui-sref="index.order.orderdetail" ng-click="show3D(x.file,x.prj_id)">查看三维</button>
+                                </td>
+                                <td ng-if="x.type != 2"><span ng-if="x.pay_status == 0" class="label label-lg label-warning">未付款</span>
+                                    <span ng-if="x.pay_status == 1" class="label label-lg label-success">已付款</span>
+                                    <button ng-if="x.pay_status == 1"><a href="{{ip}}/designPlatform/uploads/{{x.file}}/output/{{x.file}}.zip"  download="">下载(清单、加工图)</a></button></td>
+                                <td ng-if="x.type == 2"><span ng-if="x.pay_status == 0" class="label label-lg label-warning">未付款</span>
+                                    <span ng-if="x.pay_status == 1" class="label label-lg label-success">已付款</span>
+                                    <button ng-if="x.pay_status == 1"><a href="{{ip}}/designPlatform/uploads/{{x.file}}/output/{{x.file}}.dwg"  download="">下载(清单、加工图)</a></button></td>
+                                <!--<td><a ng-click="record_order_sn(x.file)" data-toggle="modal" data-target="#myModal">删除</a></td>-->
+								<td><a>删除</a></td>
+
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div id="done_evaluate" class="tab-pane"></div>
+            </div>
+        </div>
+    </div>
+</div>

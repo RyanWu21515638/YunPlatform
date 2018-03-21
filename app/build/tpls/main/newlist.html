@@ -1,0 +1,90 @@
+<style>
+    .option {
+        border: 1px solid green;
+        padding: .25em;
+        margin: .5em .5em 0 0;
+    }
+
+    .option.selected {
+        background: green;
+        color: white;
+    }
+</style>
+<div class="main-container" ng-controller="compareCtrl">
+    <div class="main-container-inner">
+        <div class="page-content">
+            <div class="page-header">
+                <h3>
+                    <!--<i class="icon-spinner icon-spin orange bigger-125"></i>-->
+                    <b>新模板清单对比</b>
+                </h3>
+            </div>
+            <div class="row animated fadeInRight">
+                <form class="col-md-3" action="http://120.25.74.178/designPlatform/home/excel/impExcel_new"
+                      enctype="multipart/form-data" method="post">
+                    <input type="file" name="import"/>
+                    <input type="submit" value="导入要对比的模板清单">
+                    <input type="hidden" name="user_id" value="{{userinfo.user_id}}">
+                </form>
+                <button class="col-md-offset-3" ng-click="exportToExcel(2)">导出对比清单</button>
+            </div>
+            <div class="row animated fadeInUp">
+                <div class="col-md-7 table-responsive">
+                    <table class="table table-bordered table-hover table2excel">
+                        <thead>
+                        <tr>
+                            <th class="text-center" colspan="8">反馈清单</th>
+                        </tr>
+                        <tr>
+                            <th class="text-center">序号</th>
+                            <th class="text-center">规格名称</th>
+                            <th class="text-center">小计</th>
+                            <th class="text-center">库存数量</th>
+                            <th class="text-center">单个面积</th>
+                            <th class="text-center">清单总面积</th>
+                            <th class="text-center">库存总面积</th>
+                            <th class="text-center">待生产</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr ng-repeat="x in formwork_compare.data">
+                            <td ng-if="x.lack<0" style="background-color: indianred" class="text-center">{{$index+1}}
+                            </td>
+                            <td ng-if="x.lack>=0" class="text-center">{{$index+1}}</td>
+                            <td ng-if="x.lack<0" style="background-color: indianred" class="text-center">{{x.name}}</td>
+                            <td ng-if="x.lack>=0" class="text-center">{{x.name}}</td>
+                            <td ng-if="x.lack<0" style="background-color: indianred" class="text-center">
+                                {{x.subtotal}}
+                            </td>
+                            <td ng-if="x.lack>=0" class="text-center">{{x.subtotal}}</td>
+                            <td ng-if="x.lack<0" style="background-color: indianred" class="text-center">
+                                {{x.old_subtotal}}
+                            </td>
+                            <td ng-if="x.lack>=0" class="text-center">{{x.old_subtotal}}</td>
+                            <td ng-if="x.lack<0" style="background-color: indianred" class="text-center">{{x.area}}</td>
+                            <td ng-if="x.lack>=0" class="text-center">{{x.area}}</td>
+                            <td ng-if="x.lack<0" style="background-color: indianred" class="text-center">
+                                {{x.sum_area}}
+                            </td>
+                            <td ng-if="x.lack>=0" class="text-center">{{x.sum_area}}</td>
+                            <td ng-if="x.lack<0" style="background-color: indianred" class="text-center">
+                                {{x.old_sum_area}}
+                            </td>
+                            <td ng-if="x.lack>=0" class="text-center">{{x.old_sum_area}}</td>
+                            <td ng-if="x.lack<0" style="background-color: yellow" class="text-center">{{-x.lack}}</td>
+                            <td ng-if="x.lack>=0" class="text-center">0</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col-md-5">
+                    <div class="row animated fadeInRight">
+                        <div id="containerpie1"></div>
+                        <div id="containerpie2"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>

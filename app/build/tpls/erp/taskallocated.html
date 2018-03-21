@@ -1,0 +1,1326 @@
+<link rel="stylesheet" href="libs/framework/bootstrap-3.0.0/css/bootstrap-table.min.css">
+<style>
+    div.fixed {
+        position: fixed;
+        left: 74%;
+        top: 32%;
+    }
+</style>
+<div class="main-container" ng-controller="ErpCtrl" ng-click="scrollon();xxx()" style="padding-left: 2%;">
+    <div class="main-container-inner">
+
+        <div class="page-content" ng-init="worktype=1;">
+
+            <div class="space-24"></div>
+            <div class="page-header">
+                <h3>
+                    <b>任务计划分配</b>
+                    <!--<div id="modal-form3" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                         aria-hidden="true">
+                        <div class="modal-dialog" style="width:40%;">
+                            <div class="modal-content">
+                                <div class="modal-body overflow-visible">
+                                    <div class="row">
+                                        <h1>确认要指派吗？</h1>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <label class="col-xs-12 col-sm-3 control-label" id="label2">{{message}}</label>
+                                    <button class="btn btn-sm" data-dismiss="modal">
+                                        <i class="icon-remove"></i>
+                                        取消
+                                    </button>
+                                    <button class="btn btn-sm btn-primary" ng-click="submittask()" data-dismiss="modal">
+                                        <i class="icon-ok"></i>
+                                        确定
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>-->
+                    <i ng-if="spinnerbl" class="icon-spinner icon-spin orange bigger-125"></i>
+                </h3>
+
+            </div>
+            <form class="form-horizontal" role="form">
+                <div class="form-group">
+                    <label class="col-md-1 control-label">请选择项目:</label>
+                    <div class="col-md-1">
+                        <select id="inputprj" style="width: 100%" ng-model="project" ng-change="projectselect(project)"
+                                ng-options="pr.id as pr.name for pr in prj" ng-disabled="!inputprj">
+                            <option value="">--请选择项目--</option>
+                        </select>
+                    </div>
+                    <label class="col-md-1 control-label">模板总数:{{prj_sum}}</label>
+                    <label class="col-md-1 control-label">请选择类别:</label>
+                    <div class="col-md-1">
+                        <select style="width: 100%" ng-model="query" ng-change="typeselect(query);"
+                                ng-options="pr.component_type as pr.component_type for pr in com_pnt" ng-disabled="!inputprj">
+                            <option value="">--请选择模板类别--</option>
+                        </select>
+                    </div>
+                    <label class="col-md-1 control-label">搜索:</label>
+                    <div class="col-md-2">
+                        <input type="text" placeholder="请输入要查询的模板型号:" ng-model="fuzzy_var">
+                        <button ng-click="select_fuzzy();">查询</button>
+                    </div>
+                    <div class="col-md-1">
+                        <select style="width: 100%" ng-model="allocate" ng-change="allocateselect(allocate);">
+                            <option value="">--是否分配完--</option>
+                            <option value="1">已分配完</option>
+                            <option value="2">未分配完</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2 pull-right">
+                        <button class="btn btn-danger" ng-click="mngjt()">管理机台</button>
+                        <button class="btn btn-success" ng-click="exportToExcel()">导出任务单</button>
+                    </div>
+                </div>
+            </form>
+            <div class="row">
+                <div class="col-md-9">
+                    <ul class="nav nav-tabs" id="myTab" >
+                        <li class="active" ng-click="worktype=1;mechinebygx(1)" ng-init="mechinebygx(1)">
+                            <a data-toggle="tab" data-target="#cut" href="" ng-click="clearselected()">
+                                <i class="green icon-home bigger-110" style="color: green"></i>
+                                开料任务
+                            </a>
+                        </li>
+
+                        <li ng-click="worktype=2;mechinebygx(2);">
+                            <a data-toggle="tab" data-target="#punch" href="">
+                                冲孔任务
+                            </a>
+                        </li>
+                        <li ng-click="worktype=3;mechinebygx(3)">
+                            <a data-toggle="tab" data-target="#weld" href="">
+                                焊接任务
+                            </a>
+                        </li>
+
+                        <li ng-click="worktype=4;mechinebygx(4)">
+                            <a data-toggle="tab" data-target="#feed" href="">
+                                分料任务
+                            </a>
+                        </li>
+                        <li ng-click="tabtask();worktype=5;">
+                            <a data-toggle="tab" data-target="#taskmng" href="">
+                                任务管理
+                            </a>
+                        </li>
+                    </ul>
+                    <div class="tab-content">
+                        <div id="cut" class="tab-pane in active">
+                            <div class="table-responsive">
+                                <table class="table table2excel1 table-bordered table-hover" id="tableProduct">
+                                    <thread>
+                                        <tr style="background-color: navajowhite">
+                                            <th width="20%" colspan="3">合计</th>
+
+                                            <th width="7%">{{num}}</th>
+
+                                            <th width="25%" class="center">{{ion}}</th>
+                                            <th width="25%" class="center">{{imon}}</th>
+                                            <th width="23%" colspan="3" class="center">操作</th>
+                                        </tr>
+                                        <tr>
+                                            <th>序号</th>
+                                            <th>模板型号</th>
+                                            <th>模板类型</th>
+                                            <th>数量</th>
+
+                                            <th class="center"><input type="checkbox" ng-model="cutchecked">已开料</th>
+                                            <th class="center"><input type="checkbox" ng-model="cutcheck">未开料</th>
+                                            <th width="9%" class="center">开料人员</th>
+                                            <th width="5%" class="center">
+                                                <input type="checkbox">
+                                            </th>
+                                            <th width="9%" class="center">拆分</th>
+                                        </tr>
+                                    </thread>
+                                    <tbody ng-repeat="x in cutinfo | filter:query"
+                                           ng-init="p_index=$index+1;p_number=x.number" ng-if="x.tasked == x.num && allocate == 1">
+                                    <tr>
+                                        <td class="center" width="5%">
+                                            {{$index+1}}
+                                        </td>
+                                        <td width="10%">{{x.number}}</td>
+                                        <td></td>
+                                        <td width="7%">{{x.num}}</td>
+
+                                        <td class="center">{{x.ion}}</td>
+                                        <td class="center">{{x.imon}}</td>
+
+                                        <td class="center"
+                                            ng-click="x.$tablechild=!x.$tablechild;"
+                                            ng-init="x.$tablechild = true">
+                                            <i ng-if="(x.$tablechild)" class="icon-plus"></i>
+                                            <i ng-if="(!x.$tablechild)" class="icon-minus"></i>
+                                        </td>
+                                        <td class="center" ng-click="cutselectArray($index+1,x.data)">
+                                            <input ng-if="x.tasked != x.num" type="checkbox"
+                                                   ng-checked="slAbl[$index+1]">
+                                        </td>
+                                        <td class="center">
+                                            <label ng-if="x.tasked == x.num" style="color: green">已分配完</label>
+                                        </td>
+                                    </tr>
+                                    <span>
+                                    <tr style="background-color: papayawhip" ng-repeat="y in x.data | filter:query"
+                                        ng-if=!x.$tablechild&&((y.incise=='1'&&cutchecked)||(y.incise=='0'&&cutcheck))>
+                                        <td class="center">{{p_index}}.{{$index+1}}</td>
+                                        <td>{{p_number}}</td>
+                                        <td>{{y.component_type}}</td>
+                                        <td>1
+                                        </td>
+                                        <td class="center">
+                                            <i ng-if="y.incise=='1'" class="icon-ok bigger-140 green"></i>
+                                        </td>
+                                        <td class="center">
+                                            <i ng-if="y.incise=='0'" class="icon-remove bigger-140 red"></i>
+                                        </td>
+                                        <td class="center">{{username[y.cutpeople]}}</td>
+                                        <td class="center" ng-click="select(y.id,p_number)">
+                                            <input ng-if="y.tasked != '1'" type="checkbox"
+                                                   ng-checked="cutchosen[y.id]"></td>
+                                        <td class="center"><label ng-if="y.tasked == '1'"
+                                                                  style="color: green">已分配</label></td>
+
+                                    </tr>
+                                    <tr style="background-color: papayawhip" ng-repeat="y in x.data | filter:query"
+                                        ng-if=!x.$tablechild&&!cutchecked&&!cutcheck>
+                                        <td class="center">{{p_index}}.{{$index+1}}</td>
+                                        <td>{{p_number}}</td>
+                                        <td>{{y.component_type}}</td>
+                                        <td>1
+                                        </td>
+                                        <td class="center">
+                                            <i ng-if="y.incise=='1'" class="icon-ok bigger-140 green"></i>
+                                        </td>
+                                        <td class="center">
+                                            <i ng-if="y.incise=='0'" class="icon-remove bigger-140 red"></i>
+                                        </td>
+                                        <td class="center">{{username[y.cutpeople]}}</td>
+                                        <td class="center" ng-click="select(y.id,p_number)">
+                                            <input ng-if="y.tasked != '1'" type="checkbox"
+                                                   ng-checked="cutchosen[y.id]"></td>
+                                        <td class="center"><label ng-if="y.tasked == '1'"
+                                                                  style="color: green">已分配</label></td>
+                                    </tr>
+                                    </span>
+                                    </tbody>
+                                    <tbody ng-repeat="x in cutinfo | filter:query"
+                                           ng-init="p_index=$index+1;p_number=x.number" ng-if="x.tasked != x.num && allocate == 2">
+                                    <tr>
+                                        <td class="center" width="5%">
+                                            {{$index+1}}
+                                        </td>
+                                        <td width="10%">{{x.number}}</td>
+                                        <td></td>
+                                        <td width="7%">{{x.num}}</td>
+
+                                        <td class="center">{{x.ion}}</td>
+                                        <td class="center">{{x.imon}}</td>
+
+                                        <td class="center"
+                                            ng-click="x.$tablechild=!x.$tablechild;"
+                                            ng-init="x.$tablechild = true">
+                                            <i ng-if="(x.$tablechild)" class="icon-plus"></i>
+                                            <i ng-if="(!x.$tablechild)" class="icon-minus"></i>
+                                        </td>
+                                        <td class="center" ng-click="cutselectArray($index+1,x.data)">
+                                            <input ng-if="x.tasked != x.num" type="checkbox"
+                                                   ng-checked="slAbl[$index+1]">
+                                        </td>
+                                        <td class="center">
+                                            <button data-toggle="modal"
+                                                    data-target="#modal-form1" ng-click="modelinfo($index+1,x.number)">
+                                                拆分
+                                            </button>
+                                            <!--<label ng-if="x.tasked == x.num" style="color: green">已分配完</label>-->
+                                        </td>
+                                    </tr>
+                                    <span>
+                                    <tr style="background-color: papayawhip" ng-repeat="y in x.data | filter:query"
+                                        ng-if=!x.$tablechild&&((y.incise=='1'&&cutchecked)||(y.incise=='0'&&cutcheck))>
+                                        <td class="center">{{p_index}}.{{$index+1}}</td>
+                                        <td>{{p_number}}</td>
+                                        <td>{{y.component_type}}</td>
+                                        <td>1
+                                        </td>
+                                        <td class="center">
+                                            <i ng-if="y.incise=='1'" class="icon-ok bigger-140 green"></i>
+                                        </td>
+                                        <td class="center">
+                                            <i ng-if="y.incise=='0'" class="icon-remove bigger-140 red"></i>
+                                        </td>
+                                        <td class="center">{{username[y.cutpeople]}}</td>
+                                        <td class="center" ng-click="select(y.id,p_number)">
+                                            <input ng-if="y.tasked != '1'" type="checkbox"
+                                                   ng-checked="cutchosen[y.id]"></td>
+                                        <td class="center"><label ng-if="y.tasked == '1'"
+                                                                  style="color: green">已分配</label></td>
+
+                                    </tr>
+                                    <tr style="background-color: papayawhip" ng-repeat="y in x.data | filter:query"
+                                        ng-if=!x.$tablechild&&!cutchecked&&!cutcheck>
+                                        <td class="center">{{p_index}}.{{$index+1}}</td>
+                                        <td>{{p_number}}</td>
+                                        <td>{{y.component_type}}</td>
+                                        <td>1
+                                        </td>
+                                        <td class="center">
+                                            <i ng-if="y.incise=='1'" class="icon-ok bigger-140 green"></i>
+                                        </td>
+                                        <td class="center">
+                                            <i ng-if="y.incise=='0'" class="icon-remove bigger-140 red"></i>
+                                        </td>
+                                        <td class="center">{{username[y.cutpeople]}}</td>
+                                        <td class="center" ng-click="select(y.id,p_number)">
+                                            <input ng-if="y.tasked != '1'" type="checkbox"
+                                                   ng-checked="cutchosen[y.id]"></td>
+                                        <td class="center"><label ng-if="y.tasked == '1'"
+                                                                  style="color: green">已分配</label></td>
+                                    </tr>
+                                    </span>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div id="punch" class="tab-pane">
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-hover">
+                                    <thread>
+                                        <tr style="background-color: navajowhite">
+                                            <th width="20%" colspan="3">合计</th>
+                                            <th width="7%">{{num}}</th>
+
+                                            <th width="13%" class="center">{{ion}}</th>
+                                            <th width="13%" class="center">{{imon}}</th>
+                                            <th width="13%" class="center">{{punched}}</th>
+                                            <th width="13%" class="center">{{no_punched}}</th>
+                                            <th width="21%" class="center" colspan="3">操作</th>
+
+                                        </tr>
+                                        <tr>
+                                            <th>序号</th>
+                                            <th>模板型号</th>
+                                            <th>模板类型</th>
+                                            <th>数量</th>
+
+                                            <th class="center"><!--<input type="checkbox" ng-model="cutchecked">-->已开料
+                                            </th>
+                                            <th class="center"><!--<input type="checkbox" ng-model="cutcheck">-->未开料
+                                            </th>
+                                            <th class="center"><input type="checkbox" ng-model="punchchecked">已冲孔</th>
+                                            <th class="center"><input type="checkbox" ng-model="punchcheck">未冲孔</th>
+                                            <th width="8%" class="center">冲孔人员</th>
+                                            <th width="5%" class="center">
+                                                <input type="checkbox" ng-model="tasked">
+                                            </th>
+                                            <th width="8%" class="center">拆分</th>
+                                        </tr>
+                                    </thread>
+                                    <tbody ng-repeat="x in cutinfo | filter:query"
+                                           ng-init="p_index=$index+1;p_number=x.number" ng-if="x.punchtasked == x.num && allocate == 1">
+                                    <tr>
+                                        <td class="center" width="5%">
+                                            {{$index+1}}
+                                        </td>
+                                        <td width="10%">{{x.number}}</td>
+                                        <td></td>
+                                        <td width="7%">{{x.num}}</td>
+
+                                        <td class="center">{{x.ion}}</td>
+                                        <td class="center">{{x.imon}}</td>
+                                        <td class="center">{{x.punched}}</td>
+                                        <td class="center">{{x.no_punched}}</td>
+
+                                        <td class="center"
+                                            ng-click="x.$tablechild=!x.$tablechild;"
+                                            ng-init="x.$tablechild = true">
+                                            <i ng-if="(x.$tablechild)" class="icon-plus"></i>
+                                            <i ng-if="(!x.$tablechild)" class="icon-minus"></i>
+                                        </td>
+                                        <td class="center" ng-click="punchselectArray($index+1,x.data)">
+                                            <input ng-if="x.punchtasked != x.num" type="checkbox"
+                                                   ng-checked="slAbl[$index+1]">
+                                        </td>
+                                        <td class="center">
+
+                                            <label style="color: green">已分配完</label>
+                                        </td>
+                                    </tr>
+                                    <span>
+                                    <tr style="background-color: papayawhip" ng-repeat="y in x.data | filter:query"
+                                        ng-if=!x.$tablechild&&((y.punch=='1'&&punchchecked)||(y.punch=='0'&&punchcheck))>
+                                        <td class="center">{{p_index}}.{{$index+1}}</td>
+                                        <td>{{p_number}}</td>
+										<td>{{y.component_type}}</td>
+                                        <td>1
+                                        </td>
+                                        <td class="center">
+                                            <i ng-if="y.incise=='1'" class="icon-ok bigger-140 green"></i>
+                                        </td>
+                                        <td class="center">
+                                            <i ng-if="y.incise=='0'" class="icon-remove bigger-140 red"></i>
+                                        </td>
+                                        <td class="center">
+                                            <i ng-if="y.punch=='1'" class="icon-ok bigger-140 green"></i>
+                                        </td>
+                                        <td class="center">
+                                            <i ng-if="y.punch=='0'" class="icon-remove bigger-140 red"></i>
+                                        </td>
+                                        <td class="center">{{username[y.punchpeople]}}</td>
+                                        <td class="center" ng-click="select(y.id)">
+                                            <input ng-if="y.punchtasked != '1'" type="checkbox"
+                                                   ng-checked="cutchosen[y.id]"></td>
+                                        <td class="center"><label ng-if="y.punchtasked == '1'"
+                                                                  style="color: green">已分配</label></td>
+
+                                    </tr>
+                                    <tr style="background-color: papayawhip" ng-repeat="y in x.data | filter:query"
+                                        ng-if=!x.$tablechild&&!punchchecked&&!punchcheck>
+                                        <td class="center">{{p_index}}.{{$index+1}}</td>
+                                        <td>{{p_number}}</td>
+										<td>{{y.component_type}}</td>
+                                        <td>1
+                                        </td>
+                                        <td class="center">
+                                            <i ng-if="y.incise=='1'" class="icon-ok bigger-140 green"></i>
+                                        </td>
+                                        <td class="center">
+                                            <i ng-if="y.incise=='0'" class="icon-remove bigger-140 red"></i>
+                                        </td>
+                                        <td class="center">
+                                            <i ng-if="y.punch=='1'" class="icon-ok bigger-140 green"></i>
+                                        </td>
+                                        <td class="center">
+                                            <i ng-if="y.punch=='0'" class="icon-remove bigger-140 red"></i>
+                                        </td>
+                                        <td class="center">{{username[y.punchpeople]}}</td>
+                                        <td class="center" ng-click="select(y.id)">
+                                            <input ng-if="y.punchtasked != '1'" type="checkbox"
+                                                   ng-checked="cutchosen[y.id]"></td>
+                                        <td class="center"><label ng-if="y.punchtasked == '1'"
+                                                                  style="color: green">已分配</label></td>
+                                    </tr>
+                                    </span>
+                                    </tbody>
+                                    <tbody ng-repeat="x in cutinfo | filter:query"
+                                           ng-init="p_index=$index+1;p_number=x.number" ng-if="x.punchtasked != x.num && allocate == 2">
+                                    <tr>
+                                        <td class="center" width="5%">
+                                            {{$index+1}}
+                                        </td>
+                                        <td width="10%">{{x.number}}</td>
+                                        <td></td>
+                                        <td width="7%">{{x.num}}</td>
+
+                                        <td class="center">{{x.ion}}</td>
+                                        <td class="center">{{x.imon}}</td>
+                                        <td class="center">{{x.punched}}</td>
+                                        <td class="center">{{x.no_punched}}</td>
+
+                                        <td class="center"
+                                            ng-click="x.$tablechild=!x.$tablechild;"
+                                            ng-init="x.$tablechild = true">
+                                            <i ng-if="(x.$tablechild)" class="icon-plus"></i>
+                                            <i ng-if="(!x.$tablechild)" class="icon-minus"></i>
+                                        </td>
+                                        <td class="center" ng-click="punchselectArray($index+1,x.data)">
+                                            <input ng-if="x.punchtasked != x.num" type="checkbox"
+                                                   ng-checked="slAbl[$index+1]">
+                                        </td>
+                                        <td class="center">
+                                            <button data-toggle="modal"
+                                                    data-target="#modal-form1" ng-click="modelinfo($index+1,x.number)">
+                                                拆分
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <span>
+                                    <tr style="background-color: papayawhip" ng-repeat="y in x.data | filter:query"
+                                        ng-if=!x.$tablechild&&((y.punch=='1'&&punchchecked)||(y.punch=='0'&&punchcheck))>
+                                        <td class="center">{{p_index}}.{{$index+1}}</td>
+                                        <td>{{p_number}}</td>
+										<td>{{y.component_type}}</td>
+                                        <td>1
+                                        </td>
+                                        <td class="center">
+                                            <i ng-if="y.incise=='1'" class="icon-ok bigger-140 green"></i>
+                                        </td>
+                                        <td class="center">
+                                            <i ng-if="y.incise=='0'" class="icon-remove bigger-140 red"></i>
+                                        </td>
+                                        <td class="center">
+                                            <i ng-if="y.punch=='1'" class="icon-ok bigger-140 green"></i>
+                                        </td>
+                                        <td class="center">
+                                            <i ng-if="y.punch=='0'" class="icon-remove bigger-140 red"></i>
+                                        </td>
+                                        <td class="center">{{username[y.punchpeople]}}</td>
+                                        <td class="center" ng-click="select(y.id)">
+                                            <input ng-if="y.punchtasked != '1'" type="checkbox"
+                                                   ng-checked="cutchosen[y.id]"></td>
+                                        <td class="center"><label ng-if="y.punchtasked == '1'"
+                                                                  style="color: green">已分配</label></td>
+
+                                    </tr>
+                                    <tr style="background-color: papayawhip" ng-repeat="y in x.data | filter:query"
+                                        ng-if=!x.$tablechild&&!punchchecked&&!punchcheck>
+                                        <td class="center">{{p_index}}.{{$index+1}}</td>
+                                        <td>{{p_number}}</td>
+										<td>{{y.component_type}}</td>
+                                        <td>1
+                                        </td>
+                                        <td class="center">
+                                            <i ng-if="y.incise=='1'" class="icon-ok bigger-140 green"></i>
+                                        </td>
+                                        <td class="center">
+                                            <i ng-if="y.incise=='0'" class="icon-remove bigger-140 red"></i>
+                                        </td>
+                                        <td class="center">
+                                            <i ng-if="y.punch=='1'" class="icon-ok bigger-140 green"></i>
+                                        </td>
+                                        <td class="center">
+                                            <i ng-if="y.punch=='0'" class="icon-remove bigger-140 red"></i>
+                                        </td>
+                                        <td class="center">{{username[y.punchpeople]}}</td>
+                                        <td class="center" ng-click="select(y.id)">
+                                            <input ng-if="y.punchtasked != '1'" type="checkbox"
+                                                   ng-checked="cutchosen[y.id]"></td>
+                                        <td class="center"><label ng-if="y.punchtasked == '1'"
+                                                                  style="color: green">已分配</label></td>
+                                    </tr>
+                                    </span>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div id="weld" class="tab-pane">
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-hover">
+                                    <thread>
+                                        <tr style="background-color: navajowhite">
+                                            <th width="20%" colspan="3">合计</th>
+                                            <th width="7%">{{num}}</th>
+
+                                            <th width="9%" class="center">{{ion}}</th>
+                                            <th width="9%" class="center">{{imon}}</th>
+                                            <th width="9%" class="center">{{punched}}</th>
+                                            <th width="9%" class="center">{{no_punched}}</th>
+                                            <th width="9%" class="center">{{weld}}</th>
+                                            <th width="9%" class="center">{{no_weld}}</th>
+                                            <th width="19%" class="center" colspan="3">操作</th>
+                                        </tr>
+                                        <tr>
+                                            <th>序号</th>
+                                            <th>模板型号</th>
+                                            <th>模板类型</th>
+                                            <th>数量</th>
+                                            <th class="center"><!--<input type="checkbox" ng-model="cutchecked">-->已开料
+                                            </th>
+                                            <th class="center"><!--<input type="checkbox" ng-model="cutcheck">-->未开料
+                                            </th>
+                                            <th class="center"><!--<input type="checkbox" ng-model="punchchecked">-->
+                                                已冲孔
+                                            </th>
+                                            <th class="center"><!--<input type="checkbox" ng-model="punchcheck">-->未冲孔
+                                            </th>
+                                            <th class="center"><input type="checkbox" ng-model="weldchecked">已焊接</th>
+                                            <th class="center"><input type="checkbox" ng-model="weldcheck">未焊接</th>
+                                            <th width="7%" class="center">焊接人员</th>
+                                            <th width="5%" class="center">
+                                                <input type="checkbox" ng-model="tasked">
+                                            </th>
+                                            <th width="7%" class="center">拆分</th>
+                                        </tr>
+                                    </thread>
+                                    <tbody ng-repeat="x in cutinfo | filter:query"
+                                           ng-init="p_index=$index+1;p_number=x.number" ng-if="x.weldtasked == x.num && allocate == 1">
+                                    <tr>
+                                        <td class="center" width="5%">
+                                            {{$index+1}}
+                                        </td>
+                                        <td width="10%">{{x.number}}</td>
+                                        <td></td>
+                                        <td width="7%">{{x.num}}</td>
+
+                                        <td class="center">{{x.ion}}</td>
+                                        <td class="center">{{x.imon}}</td>
+                                        <td class="center">{{x.punched}}</td>
+                                        <td class="center">{{x.no_punched}}</td>
+                                        <td class="center">{{x.weld}}</td>
+                                        <td class="center">{{x.no_weld}}</td>
+
+                                        <td class="center"
+                                            ng-click="x.$tablechild=!x.$tablechild;"
+                                            ng-init="x.$tablechild = true">
+                                            <i ng-if="(x.$tablechild)" class="icon-plus"></i>
+                                            <i ng-if="(!x.$tablechild)" class="icon-minus"></i>
+                                        </td>
+                                        <td class="center" ng-click="weldselectArray($index+1,x.data)">
+                                            <input ng-if="x.weldtasked != x.num" type="checkbox"
+                                                   ng-checked="slAbl[$index+1]">
+                                        </td>
+                                        <td class="center">
+                                            <label style="color: green">已分配完</label>
+                                        </td>
+                                    </tr>
+                                    <span>
+                                    <tr style="background-color: papayawhip" ng-repeat="y in x.data | filter:query"
+                                        ng-if=!x.$tablechild&&((y.weld=='1'&&weldchecked)||(y.weld=='0'&&weldcheck))>
+                                        <td class="center">{{p_index}}.{{$index+1}}</td>
+                                        <td>{{p_number}}</td>
+										<td>{{y.component_type}}</td>
+                                        <td>1
+                                        </td>
+                                        <td class="center">
+                                            <i ng-if="y.incise=='1'" class="icon-ok bigger-140 green"></i>
+                                        </td>
+                                        <td class="center">
+                                            <i ng-if="y.incise=='0'" class="icon-remove bigger-140 red"></i>
+                                        </td>
+                                        <td class="center">
+                                            <i ng-if="y.punch=='1'" class="icon-ok bigger-140 green"></i>
+                                        </td>
+                                        <td class="center">
+                                            <i ng-if="y.punch=='0'" class="icon-remove bigger-140 red"></i>
+                                        </td>
+                                        <td class="center">
+                                            <i ng-if="y.weld=='1'" class="icon-ok bigger-140 green"></i>
+                                        </td>
+                                        <td class="center">
+                                            <i ng-if="y.weld=='0'" class="icon-remove bigger-140 red"></i>
+                                        </td>
+                                        <td class="center">{{username[y.weldpeople]}}</td>
+                                        <td class="center" ng-click="select(y.id)">
+                                            <input ng-if="y.weldtasked != '1'" type="checkbox"
+                                                   ng-checked="cutchosen[y.id]"></td>
+                                        <td class="center"><label ng-if="y.weldtasked == '1'"
+                                                                  style="color: green">已分配</label></td>
+
+                                    </tr>
+                                    <tr style="background-color: papayawhip" ng-repeat="y in x.data | filter:query"
+                                        ng-if=!x.$tablechild&&!weldchecked&&!weldcheck>
+                                        <td class="center">{{p_index}}.{{$index+1}}</td>
+                                        <td>{{p_number}}</td>
+										<td>{{y.component_type}}</td>
+                                        <td>1
+                                        </td>
+                                        <td class="center">
+                                            <i ng-if="y.incise=='1'" class="icon-ok bigger-140 green"></i>
+                                        </td>
+                                        <td class="center">
+                                            <i ng-if="y.incise=='0'" class="icon-remove bigger-140 red"></i>
+                                        </td>
+                                        <td class="center">
+                                            <i ng-if="y.punch=='1'" class="icon-ok bigger-140 green"></i>
+                                        </td>
+                                        <td class="center">
+                                            <i ng-if="y.punch=='0'" class="icon-remove bigger-140 red"></i>
+                                        </td>
+                                        <td class="center">
+                                            <i ng-if="y.weld == '1'" class="icon-ok bigger-140 green"></i>
+                                        </td>
+                                        <td class="center">
+                                            <i ng-if="y.weld == '0'" class="icon-remove bigger-140 red"></i>
+                                        </td>
+                                        <td class="center">{{username[y.weldpeople]}}</td>
+                                        <td class="center" ng-click="select(y.id)">
+                                            <input ng-if="y.weldtasked != '1'" type="checkbox"
+                                                   ng-checked="cutchosen[y.id]"></td>
+                                        <td class="center"><label ng-if="y.weldtasked == '1'"
+                                                                  style="color: green">已分配</label></td>
+
+                                    </tr>
+                                    </span>
+                                    </tbody>
+                                    <tbody ng-repeat="x in cutinfo | filter:query"
+                                           ng-init="p_index=$index+1;p_number=x.number" ng-if="x.weldtasked != x.num && allocate == 2">
+                                    <tr>
+                                        <td class="center" width="5%">
+                                            {{$index+1}}
+                                        </td>
+                                        <td width="10%">{{x.number}}</td>
+                                        <td></td>
+                                        <td width="7%">{{x.num}}</td>
+
+                                        <td class="center">{{x.ion}}</td>
+                                        <td class="center">{{x.imon}}</td>
+                                        <td class="center">{{x.punched}}</td>
+                                        <td class="center">{{x.no_punched}}</td>
+                                        <td class="center">{{x.weld}}</td>
+                                        <td class="center">{{x.no_weld}}</td>
+
+                                        <td class="center"
+                                            ng-click="x.$tablechild=!x.$tablechild;"
+                                            ng-init="x.$tablechild = true">
+                                            <i ng-if="(x.$tablechild)" class="icon-plus"></i>
+                                            <i ng-if="(!x.$tablechild)" class="icon-minus"></i>
+                                        </td>
+                                        <td class="center" ng-click="weldselectArray($index+1,x.data)">
+                                            <input ng-if="x.weldtasked != x.num" type="checkbox"
+                                                   ng-checked="slAbl[$index+1]">
+                                        </td>
+                                        <td class="center">
+                                            <button data-toggle="modal"
+                                                    data-target="#modal-form1" ng-click="modelinfo($index+1,x.number)">
+                                                拆分
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <span>
+                                    <tr style="background-color: papayawhip" ng-repeat="y in x.data | filter:query"
+                                        ng-if=!x.$tablechild&&((y.weld=='1'&&weldchecked)||(y.weld=='0'&&weldcheck))>
+                                        <td class="center">{{p_index}}.{{$index+1}}</td>
+                                        <td>{{p_number}}</td>
+										<td>{{y.component_type}}</td>
+                                        <td>1
+                                        </td>
+                                        <td class="center">
+                                            <i ng-if="y.incise=='1'" class="icon-ok bigger-140 green"></i>
+                                        </td>
+                                        <td class="center">
+                                            <i ng-if="y.incise=='0'" class="icon-remove bigger-140 red"></i>
+                                        </td>
+                                        <td class="center">
+                                            <i ng-if="y.punch=='1'" class="icon-ok bigger-140 green"></i>
+                                        </td>
+                                        <td class="center">
+                                            <i ng-if="y.punch=='0'" class="icon-remove bigger-140 red"></i>
+                                        </td>
+                                        <td class="center">
+                                            <i ng-if="y.weld=='1'" class="icon-ok bigger-140 green"></i>
+                                        </td>
+                                        <td class="center">
+                                            <i ng-if="y.weld=='0'" class="icon-remove bigger-140 red"></i>
+                                        </td>
+                                        <td class="center">{{username[y.weldpeople]}}</td>
+                                        <td class="center" ng-click="select(y.id)">
+                                            <input ng-if="y.weldtasked != '1'" type="checkbox"
+                                                   ng-checked="cutchosen[y.id]"></td>
+                                        <td class="center"><label ng-if="y.weldtasked == '1'"
+                                                                  style="color: green">已分配</label></td>
+
+                                    </tr>
+                                    <tr style="background-color: papayawhip" ng-repeat="y in x.data | filter:query"
+                                        ng-if=!x.$tablechild&&!weldchecked&&!weldcheck>
+                                        <td class="center">{{p_index}}.{{$index+1}}</td>
+                                        <td>{{p_number}}</td>
+										<td>{{y.component_type}}</td>
+                                        <td>1
+                                        </td>
+                                        <td class="center">
+                                            <i ng-if="y.incise=='1'" class="icon-ok bigger-140 green"></i>
+                                        </td>
+                                        <td class="center">
+                                            <i ng-if="y.incise=='0'" class="icon-remove bigger-140 red"></i>
+                                        </td>
+                                        <td class="center">
+                                            <i ng-if="y.punch=='1'" class="icon-ok bigger-140 green"></i>
+                                        </td>
+                                        <td class="center">
+                                            <i ng-if="y.punch=='0'" class="icon-remove bigger-140 red"></i>
+                                        </td>
+                                        <td class="center">
+                                            <i ng-if="y.weld == '1'" class="icon-ok bigger-140 green"></i>
+                                        </td>
+                                        <td class="center">
+                                            <i ng-if="y.weld == '0'" class="icon-remove bigger-140 red"></i>
+                                        </td>
+                                        <td class="center">{{username[y.weldpeople]}}</td>
+                                        <td class="center" ng-click="select(y.id)">
+                                            <input ng-if="y.weldtasked != '1'" type="checkbox"
+                                                   ng-checked="cutchosen[y.id]"></td>
+                                        <td class="center"><label ng-if="y.weldtasked == '1'"
+                                                                  style="color: green">已分配</label></td>
+
+                                    </tr>
+                                    </span>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div id="feed" class="tab-pane">
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-hover">
+                                    <thread>
+                                        <tr style="background-color: navajowhite">
+                                            <th width="20%" colspan="3">合计</th>
+                                            <th width="5%">{{num}}</th>
+
+                                            <th width="8%" class="center">{{ion}}</th>
+                                            <th width="8%" class="center">{{imon}}</th>
+                                            <th width="8%" class="center">{{punched}}</th>
+                                            <th width="8%" class="center">{{no_punched}}</th>
+                                            <th width="8%" class="center">{{weld}}</th>
+                                            <th width="8%" class="center">{{no_weld}}</th>
+                                            <th width="8%" class="center">{{material}}</th>
+                                            <th width="8%" class="center">{{no_material}}</th>
+                                            <th width="11" class="center" colspan="3">操作</th>
+                                        </tr>
+                                        <tr>
+                                            <th>序号</th>
+                                            <th>模板型号</th>
+                                            <th>模板类型</th>
+                                            <th>数量</th>
+
+                                            <th class="center"><!--<input type="checkbox" ng-model="cutchecked">-->已开料
+                                            </th>
+                                            <th class="center"><!--<input type="checkbox" ng-model="cutcheck">-->未开料
+                                            </th>
+                                            <th class="center"><!--<input type="checkbox" ng-model="punchchecked">-->
+                                                已冲孔
+                                            </th>
+                                            <th class="center"><!--<input type="checkbox" ng-model="punchcheck">-->未冲孔
+                                            </th>
+                                            <th class="center"><!--<input type="checkbox" ng-model="weldchecked">-->
+                                                已焊接
+                                            </th>
+                                            <th class="center"><!--<input type="checkbox" ng-model="weldcheck">-->未焊接
+                                            </th>
+                                            <th class="center"><input type="checkbox" ng-model="materialchecked">已分料
+                                            </th>
+                                            <th class="center"><input type="checkbox" ng-model="materialcheck">未分料</th>
+                                            <th width="5%" class="center">任务人员</th>
+                                            <th width="3%" class="center">
+                                                <input type="checkbox" ng-model="tasked">
+                                            </th>
+                                            <th width="3%" class="center">拆分</th>
+                                        </tr>
+                                    </thread>
+                                    <tbody ng-repeat="x in cutinfo | filter:query"
+                                           ng-init="p_index=$index+1;p_number=x.number" ng-if="x.feedtasked == x.num && allocate == 1">
+                                    <tr>
+                                        <td class="center" width="5%">
+                                            {{$index+1}}
+                                        </td>
+                                        <td width="10%">{{x.number}}</td>
+                                        <td></td>
+                                        <td width="5%">{{x.num}}</td>
+
+                                        <td class="center">{{x.ion}}</td>
+                                        <td class="center">{{x.imon}}</td>
+                                        <td class="center">{{x.punched}}</td>
+                                        <td class="center">{{x.no_punched}}</td>
+                                        <td class="center">{{x.weld}}</td>
+                                        <td class="center">{{x.no_weld}}</td>
+                                        <td class="center">{{x.material}}</td>
+                                        <td class="center">{{x.no_material}}</td>
+
+                                        <td class="center"
+                                            ng-click="x.$tablechild=!x.$tablechild;"
+                                            ng-init="x.$tablechild = true">
+                                            <i ng-if="(x.$tablechild)" class="icon-plus"></i>
+                                            <i ng-if="(!x.$tablechild)" class="icon-minus"></i>
+                                        </td>
+                                        <td class="center" ng-click="feedselectArray($index+1,x.data)">
+                                            <input ng-if="x.feedtasked != x.num" type="checkbox"
+                                                   ng-checked="slAbl[$index+1]">
+                                        </td>
+                                        <td class="center">
+                                            <label style="color: green">已分配完</label>
+                                        </td>
+                                    </tr>
+                                    <span>
+                                    <tr style="background-color: papayawhip" ng-repeat="y in x.data | filter:query"
+                                        ng-if=!x.$tablechild&&((y.material=='1'&&materialchecked)||(y.material=='0'&&materialcheck))>
+                                        <td class="center">{{p_index}}.{{$index+1}}</td>
+                                        <td>{{p_number}}</td>
+										<td>{{y.component_type}}</td>
+                                        <td>1
+                                        </td>
+                                        <td class="center">
+                                            <i ng-if="y.incise=='1'" class="icon-ok bigger-140 green"></i>
+                                        </td>
+                                        <td class="center">
+                                            <i ng-if="y.incise=='0'" class="icon-remove bigger-140 red"></i>
+                                        </td>
+                                        <td class="center">
+                                            <i ng-if="y.punch=='1'" class="icon-ok bigger-140 green"></i>
+                                        </td>
+                                        <td class="center">
+                                            <i ng-if="y.punch=='0'" class="icon-remove bigger-140 red"></i>
+                                        </td>
+                                        <td class="center">
+                                            <i ng-if="y.weld=='1'" class="icon-ok bigger-140 green"></i>
+                                        </td>
+                                        <td class="center">
+                                            <i ng-if="y.weld=='0'" class="icon-remove bigger-140 red"></i>
+                                        </td>
+                                        <td class="center">
+                                            <i ng-if="y.material == '1'" class="icon-ok bigger-140 green"></i>
+                                        </td>
+                                        <td class="center">
+                                            <i ng-if="y.material == '0'" class="icon-remove bigger-140 red"></i>
+                                        </td>
+                                        <td class="center">{{username[y.feedpeople]}}</td>
+                                        <td class="center" ng-click="select(y.id)">
+                                            <input ng-if="y.feedtasked != '1'" type="checkbox"
+                                                   ng-checked="cutchosen[y.id]"></td>
+                                        <td class="center"><label ng-if="y.feedtasked == '1'"
+                                                                  style="color: green">已分配</label></td>
+                                    </tr>
+                                    <tr style="background-color: papayawhip" ng-repeat="y in x.data | filter:query"
+                                        ng-if=!x.$tablechild&&!materialchecked&&!materialcheck>
+                                        <td class="center">{{p_index}}.{{$index+1}}</td>
+                                        <td>{{p_number}}</td>
+										<td>{{y.component_type}}</td>
+                                        <td>1
+                                        </td>
+                                        <td class="center">
+                                            <i ng-if="y.incise=='1'" class="icon-ok bigger-140 green"></i>
+                                        </td>
+                                        <td class="center">
+                                            <i ng-if="y.incise=='0'" class="icon-remove bigger-140 red"></i>
+                                        </td>
+                                        <td class="center">
+                                            <i ng-if="y.punch=='1'" class="icon-ok bigger-140 green"></i>
+                                        </td>
+                                        <td class="center">
+                                            <i ng-if="y.punch=='0'" class="icon-remove bigger-140 red"></i>
+                                        </td>
+                                        <td class="center">
+                                            <i ng-if="y.weld == '1'" class="icon-ok bigger-140 green"></i>
+                                        </td>
+                                        <td class="center">
+                                            <i ng-if="y.weld == '0'" class="icon-remove bigger-140 red"></i>
+                                        </td>
+                                        <td class="center">
+                                            <i ng-if="y.material == '1'" class="icon-ok bigger-140 green"></i>
+                                        </td>
+                                        <td class="center">
+                                            <i ng-if="y.material == '0'" class="icon-remove bigger-140 red"></i>
+                                        </td>
+                                        <td class="center">{{username[y.feedpeople]}}</td>
+                                        <td class="center" ng-click="select(y.id)">
+                                            <input ng-if="y.feedtasked != '1'" type="checkbox"
+                                                   ng-checked="cutchosen[y.id]"></td>
+                                        <td class="center"><label ng-if="y.feedtasked == '1'"
+                                                                  style="color: green">已分配</label></td>
+                                    </tr>
+                                    </span>
+                                    </tbody>
+                                    <tbody ng-repeat="x in cutinfo | filter:query"
+                                           ng-init="p_index=$index+1;p_number=x.number" ng-if="x.feedtasked != x.num && allocate == 2">
+                                    <tr>
+                                        <td class="center" width="5%">
+                                            {{$index+1}}
+                                        </td>
+                                        <td width="10%">{{x.number}}</td>
+                                        <td></td>
+                                        <td width="5%">{{x.num}}</td>
+
+                                        <td class="center">{{x.ion}}</td>
+                                        <td class="center">{{x.imon}}</td>
+                                        <td class="center">{{x.punched}}</td>
+                                        <td class="center">{{x.no_punched}}</td>
+                                        <td class="center">{{x.weld}}</td>
+                                        <td class="center">{{x.no_weld}}</td>
+                                        <td class="center">{{x.material}}</td>
+                                        <td class="center">{{x.no_material}}</td>
+
+                                        <td class="center"
+                                            ng-click="x.$tablechild=!x.$tablechild;"
+                                            ng-init="x.$tablechild = true">
+                                            <i ng-if="(x.$tablechild)" class="icon-plus"></i>
+                                            <i ng-if="(!x.$tablechild)" class="icon-minus"></i>
+                                        </td>
+                                        <td class="center" ng-click="feedselectArray($index+1,x.data)">
+                                            <input ng-if="x.feedtasked != x.num" type="checkbox"
+                                                   ng-checked="slAbl[$index+1]">
+                                        </td>
+                                        <td class="center">
+                                            <button data-toggle="modal"
+                                                    data-target="#modal-form1" ng-click="modelinfo($index+1,x.number)">
+                                                拆分
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <span>
+                                    <tr style="background-color: papayawhip" ng-repeat="y in x.data | filter:query"
+                                        ng-if=!x.$tablechild&&((y.material=='1'&&materialchecked)||(y.material=='0'&&materialcheck))>
+                                        <td class="center">{{p_index}}.{{$index+1}}</td>
+                                        <td>{{p_number}}</td>
+										<td>{{y.component_type}}</td>
+                                        <td>1
+                                        </td>
+                                        <td class="center">
+                                            <i ng-if="y.incise=='1'" class="icon-ok bigger-140 green"></i>
+                                        </td>
+                                        <td class="center">
+                                            <i ng-if="y.incise=='0'" class="icon-remove bigger-140 red"></i>
+                                        </td>
+                                        <td class="center">
+                                            <i ng-if="y.punch=='1'" class="icon-ok bigger-140 green"></i>
+                                        </td>
+                                        <td class="center">
+                                            <i ng-if="y.punch=='0'" class="icon-remove bigger-140 red"></i>
+                                        </td>
+                                        <td class="center">
+                                            <i ng-if="y.weld=='1'" class="icon-ok bigger-140 green"></i>
+                                        </td>
+                                        <td class="center">
+                                            <i ng-if="y.weld=='0'" class="icon-remove bigger-140 red"></i>
+                                        </td>
+                                        <td class="center">
+                                            <i ng-if="y.material == '1'" class="icon-ok bigger-140 green"></i>
+                                        </td>
+                                        <td class="center">
+                                            <i ng-if="y.material == '0'" class="icon-remove bigger-140 red"></i>
+                                        </td>
+                                        <td class="center">{{username[y.feedpeople]}}</td>
+                                        <td class="center" ng-click="select(y.id)">
+                                            <input ng-if="y.feedtasked != '1'" type="checkbox"
+                                                   ng-checked="cutchosen[y.id]"></td>
+                                        <td class="center"><label ng-if="y.feedtasked == '1'"
+                                                                  style="color: green">已分配</label></td>
+                                    </tr>
+                                    <tr style="background-color: papayawhip" ng-repeat="y in x.data | filter:query"
+                                        ng-if=!x.$tablechild&&!materialchecked&&!materialcheck>
+                                        <td class="center">{{p_index}}.{{$index+1}}</td>
+                                        <td>{{p_number}}</td>
+										<td>{{y.component_type}}</td>
+                                        <td>1
+                                        </td>
+                                        <td class="center">
+                                            <i ng-if="y.incise=='1'" class="icon-ok bigger-140 green"></i>
+                                        </td>
+                                        <td class="center">
+                                            <i ng-if="y.incise=='0'" class="icon-remove bigger-140 red"></i>
+                                        </td>
+                                        <td class="center">
+                                            <i ng-if="y.punch=='1'" class="icon-ok bigger-140 green"></i>
+                                        </td>
+                                        <td class="center">
+                                            <i ng-if="y.punch=='0'" class="icon-remove bigger-140 red"></i>
+                                        </td>
+                                        <td class="center">
+                                            <i ng-if="y.weld == '1'" class="icon-ok bigger-140 green"></i>
+                                        </td>
+                                        <td class="center">
+                                            <i ng-if="y.weld == '0'" class="icon-remove bigger-140 red"></i>
+                                        </td>
+                                        <td class="center">
+                                            <i ng-if="y.material == '1'" class="icon-ok bigger-140 green"></i>
+                                        </td>
+                                        <td class="center">
+                                            <i ng-if="y.material == '0'" class="icon-remove bigger-140 red"></i>
+                                        </td>
+                                        <td class="center">{{username[y.feedpeople]}}</td>
+                                        <td class="center" ng-click="select(y.id)">
+                                            <input ng-if="y.feedtasked != '1'" type="checkbox"
+                                                   ng-checked="cutchosen[y.id]"></td>
+                                        <td class="center"><label ng-if="y.feedtasked == '1'"
+                                                                  style="color: green">已分配</label></td>
+                                    </tr>
+                                    </span>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div id="taskmng" class="tab-pane"
+                             style="overflow-x: auto; overflow-y: auto; height:500px; width:100%;">
+                            <h1>当分配任务错了在这里删除任务单然后重新分配</h1>
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-hover">
+                                    <thread>
+                                        <tr style="background-color: navajowhite">
+                                            <th>序号</th>
+                                            <th>工序</th>
+                                            <th>机台</th>
+                                            <th>模板数量</th>
+                                            <th>已完成</th>
+                                            <th>分配时间</th>
+                                            <th>完成时间</th>
+                                            <th class="center">操作</th>
+                                        </tr>
+                                    </thread>
+                                    <tbody>
+                                    <tr ng-repeat="x in taskinfo" ng-click="task_sl_for_print(x.id,x.number,$index+1)">
+                                        <td>{{$index+1}}</td>
+                                        <td>{{x.names}}</td>
+                                        <td>{{x.number}}</td>
+                                        <td>{{x.num}}</td>
+                                        <td ng-if="x.finished == false">未完成</td>
+                                        <td ng-if="x.finished == true">已完成</td>
+                                        <td>{{x.create_time}}</td>
+                                        <td>{{x.workdone_time}}</td>
+                                        <td class="center">
+                                            <div class="visible-md visible-lg hidden-sm hidden-xs action-buttons">
+                                                <a class="red" href="" ng-click="taskdel(x.id)">
+                                                    <i class="icon-trash bigger-130"></i>
+                                                </a>
+                                            </div>
+
+                                        </td>
+                                        <!--<td class="center"><button class="btn-success" ng-click="exportToExcel(x.number+'任务单'+x.id+'')">导出任务单</button></td>
+                                        -->
+
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <tm-pagination conff="paginationConf"></tm-pagination>
+                </div>
+                <div id="modal-form1" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                     aria-hidden="true">
+                    <div class="modal-dialog" style="width:40%;">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                <h4 class="blue bigger">任务拆分</h4>
+                            </div>
+                            <div class="modal-body overflow-visible">
+                                <div class="row">
+                                    <label>模板{{indexcname}}</label>
+                                    <label ng-if="worktype==1">可分配数量{{allowtasedcutnum}}块</label>
+                                    <label ng-if="worktype==2">可分配数量{{allowtasedpunchnum}}块</label>
+                                    <label ng-if="worktype==3">可分配数量{{allowtasedweldnum}}块</label>
+                                    <label ng-if="worktype==4">可分配数量{{allowtasedfeednum}}块</label>
+                                </div>
+                                <div class="row">请输入待分配的数量：
+                                    <input type="text" name="num" id="indexcnum" ng-model="indexcnum"/>
+
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <label class="col-xs-12 col-sm-3 control-label" id="label1">{{message}}</label>
+                                <button class="btn btn-sm" data-dismiss="modal">
+                                    <i class="icon-remove"></i>
+                                    取消
+                                </button>
+                                <button class="btn btn-sm btn-primary" ng-if="worktype==1" ng-click="cutupdate()" data-dismiss="modal">
+                                    <i class="icon-ok"></i>
+                                    确定
+                                </button>
+                                <button class="btn btn-sm btn-primary" ng-if="worktype==2" ng-click="punchupdate()" data-dismiss="modal">
+                                    <i class="icon-ok"></i>
+                                    确定
+                                </button>
+                                <button class="btn btn-sm btn-primary" ng-if="worktype==3" ng-click="weldupdate()" data-dismiss="modal">
+                                    <i class="icon-ok"></i>
+                                    确定
+                                </button>
+                                <button class="btn btn-sm btn-primary" ng-if="worktype==4" ng-click="feedupdate()" data-dismiss="modal">
+                                    <i class="icon-ok"></i>
+                                    确定
+                                </button>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="modal-form2" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                     aria-hidden="true">
+                    <div class="modal-dialog" style="width:40%;">
+                        <div class="modal-content">
+                            <div class="modal-body overflow-visible">
+                                <div class="row">
+                                    <h1>确认要指派吗？</h1>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <label class="col-xs-12 col-sm-3 control-label" id="label2">{{message}}</label>
+                                <button class="btn btn-sm" data-dismiss="modal">
+                                    <i class="icon-remove"></i>
+                                    取消
+                                </button>
+                                <button class="btn btn-sm btn-primary" ng-click="submittask()" data-dismiss="modal">
+                                    <i class="icon-ok"></i>
+                                    确定
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-2 fixed" id="taskform" ng-if="worktype != 5">
+                    <div class="alert" style="height:100%;width: 100%;background-color: aliceblue">
+                        <strong>
+                            <label style="font-size: x-large;text-align: center;display: block">任务信息</label>
+                        </strong>
+                        <div class="space-12"></div>
+                        <form class="form-horizontal" role="form">
+                            <div class="form-group">
+                                <h4 class="col-md-3 control-label no-padding-right">类型：</h4>
+                                <input type="text" value="开料" readonly ng-if="worktype==1"/>
+                                <input type="text" value="冲孔" readonly ng-if="worktype==2"/>
+                                <input type="text" value="焊接" readonly ng-if="worktype==3"/>
+                                <input type="text" value="分料" readonly ng-if="worktype==4"/>
+                            </div>
+                            <hr>
+                            <!--<div class="form-group">
+                                <h4 class="col-md-5 control-label no-padding-right">指定人员：</h4>
+                                <select class="col-md-6"
+                                        ng-model="task.user_id"
+                                        ng-options="lb.userid as lb.username for lb in labour"
+                                >
+                                    <option value="">&#45;&#45; 请选择工人 &#45;&#45;</option>
+                                </select>
+                            </div>
+                            <hr>-->
+                            <div class="form-group" ng-if="worktype==1">
+                                <h4 class="col-md-3 control-label no-padding-right">指定机台：</h4>
+                                <div class="widget-box col-md-8" >
+                                    <div class="widget-body" style="overflow:auto">
+                                        <div class="widget-main">
+                                            <div>
+                                                <label readonly style="width: 50%;" ng-repeat="x in mechineinfobygx" ng-class="{span: true}"
+                                                       id="defult2" >{{x.number}}
+                                                    <input type="checkbox" ng-model="$parent.conf[$index]" ng-click="radiochose($index)">
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            <div class="form-group" ng-if="worktype==2||worktype==3||worktype==4">
+                                <div class="col-md-3">
+                                    <h4 class="control-label no-padding-right">指定机台：<br></h4>
+                                    <div class="col-md-10 col-md-offset-5">
+                                        <input type="checkbox" ng-checked="mechinechosebl" ng-click="okok()">
+                                        <label>全选</label>
+                                    </div><!--
+                                    <input class="col-md-12" type="checkbox">
+                                    <label class="col-md-12 control-label">（全选）</label>-->
+                                </div>
+
+                                <!--<table class="table-bordered table-hover" style="background-color: navajowhite">
+                                    <tbody>
+                                    <tr>
+                                        <th class="center" rowspan="2">机台</th>
+                                        <th class="center">全选</th>
+                                    </tr>
+                                    <tr>
+                                        <th class="center"><input type="checkbox" ng-click="okok()"></th>
+                                    </tr>
+                                    <tr ng-repeat="x in mechineinfobygx">
+                                        <th class="center">{{x.number}}</th>
+                                        <th class="center"><input type="checkbox" ng-model="$parent.conf[$index]" ng-click="ok($index)"></th>
+                                    </tr>
+                                    </tbody>
+                                </table>-->
+                                <div class="widget-box col-md-8" >
+                                    <div class="widget-body" style="height:100px; overflow:auto">
+                                        <div class="widget-main">
+                                            <div>
+                                            <label readonly style="width: 50%;" ng-repeat="x in mechineinfobygx" ng-class="{span: true}"
+                                                      id="defult1" >{{x.number}}
+                                                <input type="checkbox" ng-model="$parent.conf[$index]" ng-click="ok($index)">
+                                            </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <hr>
+                            <div >
+                                <button class="btn btn-success" type="button" data-toggle="modal"
+                                        data-target="#modal-form2" style="width: 45%;">
+                                    <i class="icon-ok"></i>
+                                    提交任务
+                                </button>
+                                &nbsp;
+                                <button class="btn btn-danger" ng-click="resetall()" style="width:45%;">
+                                    <i class="icon-undo"></i>
+                                    重置
+                                </button>
+                            </div>
+                            <hr>
+                            <div class="widget-box" >
+                                <div class="widget-header">
+                                    <h4>任务详情(所选数量{{tasksum}})</h4>
+
+                                    <div class="widget-toolbar" >
+                                        <a href="" data-action="collapse">
+                                            <i class="icon-chevron-up"></i>
+                                        </a>
+
+                                        <!--<a href="" data-action="close">
+                                            <i class="icon-remove"></i>
+                                        </a>-->
+                                    </div>
+                                </div>
+                                <div class="widget-body" style="height:100px; overflow:auto">
+                                    <div class="widget-main">
+                                        <div>
+                                            <textarea readonly style="width: 50%;"
+                                                      id="defult" ng-repeat="x in tasked" ng-if="x.id !=0">编号:{{x.id}}</textarea>
+                                            <!--<table>
+                                                <tr ng-repeat="x in tasked">
+                                                    <td ng-if="x.id != 0">
+                                                        {{x.id}}
+                                                    </td>
+                                                </tr>
+
+                                            </table>-->
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr>
+                            </div>
+
+                        </form>
+                        <!--<div class="alert-success">
+                            <table class="table" >
+                                <tbody>
+                                <tr style="height: 150%">
+                                    <td class="align-right" width="30%"><h5 style="font-size: 200%">类型:</h5></td>
+                                    <td class="center"><h5 style="font-size: 300%"><strong>{{formwork.project_name}}</strong></h5></td>
+                                </tr>
+                                <tr style="height: 250%">
+                                    <td class="align-right"><h5 style="font-size: 200%">执行人:</h5></td>
+                                    <td class="center"><h5 style="font-size: 300%"><strong>{{formwork.number}}</strong></h5></td>
+                                </tr>
+                                <tr style="height: 200%">
+                                    <td class="align-right"><h5 style="font-size: 200%">机台:</h5></td>
+                                    <td class="center"><h5 style="font-size: 300%"><strong>{{formwork.partition_name}}</strong></h5></td>
+                                </tr>
+                                <tr style="height: 200%">
+                                    <td class="align-right"><h5 style="font-size: 200%">详情:</h5></td>
+                                    <td class="center"><h5 style="font-size: 300%"><strong>{{formwork.partition_name}}</strong></h5></td>
+                                </tr>
+                                </tbody>
+
+                            </table>
+
+                        </div>-->
+                    </div>
+                </div>
+                <div class="col-md-3" ng-if="worktype == 5">
+                    <div class="table-responsive">
+                        <table class="table table2excel table-bordered table-hover" id="tableServer">
+                            <thread>
+                                <tr>
+                                    <th colspan="3" class="center">任务单{{jitainumber}}(数量:{{task_for_print_sum}})</th>
+                                </tr>
+                                <tr style="background-color:aliceblue">
+                                    <th>任务号</th>
+                                    <th>模板型号</th>
+                                    <th>数量</th>
+                                </tr>
+                            </thread>
+                            <tbody>
+                            <tr ng-repeat="x in task_for_print">
+                                <td>{{taskindex}}</td>
+                                <td>{{x.number}}</td>
+                                <td>{{x.num}}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div><!--pagecontent-->
+    </div><!-- main-container-inner-->
+
+</div>

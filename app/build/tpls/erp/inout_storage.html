@@ -1,0 +1,424 @@
+<div class="main-container" style="padding-left: 2%" ng-controller="storageCtrl">
+    <div class="main-container-inner">
+        <div class="space-24"></div>
+        <div class="page-content">
+            <div class="page-header">
+                <h3>
+                    <!--<i class="icon-spinner icon-spin orange bigger-125"></i>-->
+                    <b>成品出入库管理</b>
+                    <label style="color:red; font-size: 22px;">(入库单和出库单请都按照<a href="app/build/data/demo.xlsx">下载样例</a>的文件格式格式上传)</label>
+                </h3>
+            </div>
+            <ul id="myTab" class="nav nav-tabs">
+                <li><a data-target="#zero" data-toggle="tab" ng-click="setlinkinstorage()">入库单</a></li>
+                <li><a data-target="#zero2" data-toggle="tab" ng-click="setlinkoutstorage()">出库单</a></li>
+                <li class="active"><a data-target="#first" data-toggle="tab">入库</a></li>
+                <li><a data-target="#second" data-toggle="tab">出库</a></li>
+                <li><a data-target="#third" data-toggle="tab">移库</a></li>
+            </ul>
+            <div id="myTabContent" class="tab-content">
+                <div class="tab-pane fade " id="zero">
+                    <form id="import" enctype="multipart/form-data" method="post"
+                          action="">
+                        <input type="file" name="import"/>
+                        <input type="submit" value="导入入库单">
+                        <input type="hidden" name="signature" value="{{signature}}">
+                    </form>
+                    <hr>
+                    <div class="row">
+                        <div class="col-md-5">
+                            <table class="table table-striped table-hover">
+                                <caption>
+                                    <h3>入库单列表</h3>
+
+                                </caption>
+                                <thead>
+                                <tr>
+                                    <th>序号</th>
+                                    <th>文件名</th>
+                                    <th>上传时间</th>
+                                    <th>操作</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr ng-repeat="x in instoragelist" ng-click="instorageDetail(x.id)">
+                                    <td>{{$index+1}}</td>
+                                    <td>{{x.file_name}}</td>
+                                    <td>{{x.upload_time}}</td>
+                                    <td class="center">
+                                        <div class="visible-md visible-lg hidden-sm hidden-xs action-buttons">
+                                            <a class="red" href="" ng-click="instorageDel(x.id)">
+                                                <i class="icon-trash bigger-130"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="animated fadeInUp"
+                             style="position:absolute; left: 47%;width: 2px; background-color: lightgrey;padding-bottom: 40%"></div>
+                        <div class="col-md-5 col-md-offset-1">
+                            <table class="table table-striped table-hover col-md-6">
+                                <caption><h4>入库单详情</h4>
+                                    <!--<button class="col-md-2 pull-right">导出excel</button>-->
+                                </caption>
+                                <thead>
+                                <tr>
+                                    <th>序号</th>
+                                    <th>模板类型</th>
+                                    <th>模板编号</th>
+                                    <th>项目</th>
+                                    <th>分区</th>
+                                    <th>包号</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr ng-repeat="x in instorageDetailinfo">
+                                    <td>{{$index+1}}</td>
+                                    <td>{{x.type}}</td>
+                                    <td>{{x.number}}</td>
+                                    <td>{{x.prj_id}}</td>
+                                    <td>{{x.partition}}</td>
+                                    <td>{{x.package}}</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="zero2">
+                    <form id="import2" enctype="multipart/form-data" method="post"
+                          action="">
+                        <input type="file" name="import"/>
+                        <input type="submit" value="导入设计单">
+                    </form>
+                    <hr>
+                    <div class="row">
+                        <div class="col-md-5" id="outstorage1" style="display: block;">
+                            <table class="table table-striped table-hover">
+                                <caption><h3>设计单与库存对比</h3>
+                                    <button ng-click="addoutstorage_list()">生成出库单</button>
+                                </caption>
+                                <thead>
+                                <tr>
+                                    <th>序号</th>
+                                    <th>模板类型</th>
+                                    <th>模板编号</th>
+                                    <th>是否缺板</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr ng-repeat="x in temp">
+                                    <td>{{$index+1}}</td>
+                                    <td>{{x.type}}</td>
+                                    <td>{{x.form}}</td>
+                                    <td class="hidden-480" ng-if="x.lack == 0">
+                                        <span class="label label-sm label-warning">缺</span>
+                                    </td>
+                                    <td class="hidden-480" ng-if="x.lack == 1">
+                                        <span class="label label-sm label-success">否</span>
+                                    </td>
+                                </tr>
+
+                                </tbody>
+                            </table>
+
+                        </div>
+                        <div class="col-md-5" id="outstorage2" style="display: none;">
+                            <table class="table table-striped table-hover">
+                                <caption><h3>出库单详情</h3>
+                                    <button ng-click="back()">返回继续导入设计单</button>
+                                </caption>
+                                <thead>
+                                <tr>
+                                    <th>序号</th>
+                                    <th>模板类型</th>
+                                    <th>模板编号</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr ng-repeat="x in ourstoragedetail">
+                                    <td>{{$index+1}}</td>
+                                    <td>{{x.type}}</td>
+                                    <td>{{x.form}}</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col-md-5 col-md-offset-1" style="overflow-x: auto; overflow-y: auto; height:600px;">
+                            <table class="table table-striped table-hover">
+                                <caption><h3>出库单列表</h3></caption>
+                                <thead>
+                                <tr>
+                                    <th>序号</th>
+                                    <th>出库单号</th>
+                                    <th>建单时间</th>
+                                    <th>操作</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr ng-repeat="x in oustoragelist" ng-click="outstorage_detail(x.id)">
+                                    <td>{{$index+1}}</td>
+                                    <td><a>{{x.order_no}}</a></td>
+                                    <td>{{x.create_time}}</td>
+                                    <td class="center">
+                                        <div class="visible-md visible-lg hidden-sm hidden-xs action-buttons">
+                                            <a class="red" href="" ng-click="delete_out_storages_detail(x.id)">
+                                                <i class="icon-trash bigger-130"></i>
+                                            </a>
+                                        </div>
+
+                                    </td>
+                                </tr>
+
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="animated fadeInUp"
+                             style="position:absolute; left: 45%;width: 2px; background-color: lightgrey;padding-bottom: 40%"></div>
+                    </div>
+                </div>
+                <div class="tab-pane fade in active" id="first">
+                    <form class="form-horizontal" role="form" style="padding-top: 2%">
+                        <div class="form-group ">
+                            <label class="block clearfix col-md-offset-2 animated fadeInLeft">
+                                <span class="block input-icon input-icon-right">
+                                    <input id="kboardin" type="text" class="form-control" placeholder="请先扫描卡板二维码"
+                                           ng-keydown="kboardscan($event)" ng-model="kboardinfo.kboardstr"
+                                           ng-click="setnull()">
+                                </span>
+                            </label>
+                            <i ng-if="lockbl == false" class="icon-unlock animated fadeInLeft"></i>
+                            <i ng-if="lockbl == true" class="icon-lock animated fadeInLeft" ng-click="enable()"></i>
+                            <label class="block clearfix col-md-offset-2 animated fadeInRight"
+                                   style="padding-left: 3.5%">
+                                <span class="block input-icon input-icon-right">
+                                    <input id="formworkin" type="text" class="form-control" placeholder="请扫描模板二维码"
+                                           ng-keydown="formworkinscan($event)" ng-model="kboardinfo.inputformwork">
+                                </span>
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-2 control-label animated fadeInLeft">卡板编号：</label>
+                            <label class="col-md-3 animated fadeInLeft"
+                                   style="font-size: 50px;background-color: chartreuse">{{kboardname}}</label>
+                            <label class="col-md-1 control-label animated fadeInRight">模板编号：</label>
+                            <label class="col-md-3 animated fadeInRight"
+                                   style="font-size: 50px;background-color: orange">{{kboardinfo.inputformwork}}</label>
+                        </div>
+                    </form>
+                    <hr>
+                    <div class="row">
+                        <div class="col-md-5">
+                            <table class="table table-striped table-hover">
+                                <caption>卡板{{kboardinfo.kboardstr}}上所有模板</caption>
+                                <thead>
+                                <tr>
+                                    <th>序号</th>
+                                    <th>模板类型</th>
+                                    <th>模板编号</th>
+                                    <th>项目名称</th>
+                                    <th>区号</th>
+                                    <th>包号</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr ng-repeat="x in kboard_formwork">
+                                    <td>{{$index+1}}</td>
+                                    <td>{{x.type}}</td>
+                                    <td>{{x.form}}</td>
+                                    <td>{{x.project}}</td>
+                                    <td>{{x.partition}}</td>
+                                    <td>{{x.package}}</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="animated fadeInUp"
+                             style="position:absolute; left: 47%;width: 2px; background-color: lightgrey;padding-bottom: 40%"></div>
+                        <div class="col-md-5 col-md-offset-1">
+                            <table class="table table-hover col-md-6">
+                                <caption>正在入库的模板</caption>
+                                <thead>
+                                <tr>
+                                    <th>序号</th>
+                                    <th>模板类型</th>
+                                    <th>模板编号</th>
+                                    <th>入库时间</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr ng-repeat="x in storage" ng-if="$index==0" style="background-color: darkorange">
+                                    <td>{{$index+1}}</td>
+                                    <td>{{x.type}}</td>
+                                    <td>{{x.form}}</td>
+                                    <td>{{x.create_time}}</td>
+                                </tr>
+                                <tr ng-repeat="x in storage" ng-if="$index==1" style="background-color: orange">
+                                    <td>{{$index+1}}</td>
+                                    <td>{{x.type}}</td>
+                                    <td>{{x.form}}</td>
+                                    <td>{{x.create_time}}</td>
+                                </tr>
+                                <tr ng-repeat="x in storage" ng-if="$index==2" style="background-color: lightcoral">
+                                    <td>{{$index+1}}</td>
+                                    <td>{{x.type}}</td>
+                                    <td>{{x.form}}</td>
+                                    <td>{{x.create_time}}</td>
+                                </tr>
+                                <tr ng-repeat="x in storage" ng-if="$index!=0 && $index!=1 && $index!=2">
+                                    <td>{{$index+1}}</td>
+                                    <td>{{x.type}}</td>
+                                    <td>{{x.form}}</td>
+                                    <td>{{x.create_time}}</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="second">
+                    <form class="form-horizontal" role="form" style="padding-top: 2%">
+                        <div class="form-group">
+                            <label class="col-md-2 col-md-offset-2 control-label">模板扫码：</label>
+                            <input id="formworkout" class="col-md-3" type="text" placeholder="请扫描模板二维码" size="15"
+                                   style="height: 30px" ng-keydown="formworkoutscan($event)"
+                                   ng-model="kboardinfo.outputformwork">
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-2 col-md-offset-2 control-label">模板编号：</label>
+                            <label class="col-md-3" style="font-size: 50px;background-color: orange">{{kboardinfo.outputformwork}}</label>
+                        </div>
+                    </form>
+                    <hr>
+                    <div class="row">
+                        <div class="col-md-5">
+                            <table class="table table-striped table-hover">
+                                <caption>此模板所在{{kboardname}}卡板上所有模板</caption>
+                                <thead>
+                                <tr>
+                                    <th>序号</th>
+                                    <th>模板类型</th>
+                                    <th>模板编号</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr ng-repeat="x in kboard_formwork">
+                                    <td>{{$index+1}}</td>
+                                    <td>{{x.type}}</td>
+                                    <td>{{x.form}}</td>
+                                </tr>
+
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="animated fadeInUp"
+                             style="position:absolute; left: 47%;width: 2px; background-color: lightgrey;padding-bottom: 40%"></div>
+                        <div class="col-md-5 col-md-offset-1">
+                            <table class="table table-hover col-md-6">
+                                <caption>正在出库的模板</caption>
+                                <thead>
+                                <tr>
+                                    <th>序号</th>
+                                    <th>模板类型</th>
+                                    <th>模板编号</th>
+									<th>出库时间</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr ng-repeat="x in storageout">
+                                    <td>{{$index+1}}</td>
+                                    <td>{{x.types}}</td>
+                                    <td>{{x.formwork_id}}</td>
+									<td>{{x.create_time}}</td>
+                                </tr>
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="third">
+                    <form class="form-horizontal" role="form" style="padding-top: 2%">
+                        <div class="form-group ">
+                            <label class="block clearfix col-md-offset-2 animated fadeInLeft">
+                                <span class="block input-icon input-icon-right">
+                                    <input id="kboardremove" type="text" class="form-control" placeholder="请先扫描卡板二维码"
+                                           ng-keydown="kboardscan($event)" ng-model="kboardinfo.kboardstr"
+                                           ng-click="setnull()">
+                                </span>
+                            </label>
+                            <i ng-if="lockbl == false" class="icon-unlock animated fadeInLeft"></i>
+                            <i ng-if="lockbl == true" class="icon-lock animated fadeInLeft" ng-click="enable()"></i>
+                            <label class="block clearfix col-md-offset-2 animated fadeInRight"
+                                   style="padding-left: 3.5%">
+                                <span class="block input-icon input-icon-right">
+                                    <input id="formworkremove" type="text" class="form-control" placeholder="请扫描模板二维码"
+                                           ng-keydown="formworkremovescan($event)" ng-model="kboardinfo.removeformwork">
+                                </span>
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-2 control-label animated fadeInLeft">卡板编号：</label>
+                            <label class="col-md-3 animated fadeInLeft"
+                                   style="font-size: 50px;background-color: chartreuse">{{kboardname}}</label>
+                            <label class="col-md-1 control-label animated fadeInRight">模板编号：</label>
+                            <label class="col-md-3 animated fadeInRight"
+                                   style="font-size: 50px;background-color: orange">{{kboardinfo.removeformwork}}</label>
+                        </div>
+                    </form>
+                    <hr>
+                    <div class="row">
+                        <div class="col-md-5">
+                            <table class="table table-striped table-hover">
+                                <caption>卡板{{kboardname}}上所有模板</caption>
+                                <thead>
+                                <tr>
+                                    <th>序号</th>
+                                    <th>模板类型</th>
+                                    <th>模板编号</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr ng-repeat="x in kboard_formwork">
+                                    <td>{{$index+1}}</td>
+                                    <td>{{x.type}}</td>
+                                    <td>{{x.form}}</td>
+                                </tr>
+
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col-md-5 col-md-offset-1">
+                            <table class="table table-hover col-md-6">
+                                <caption>正在移库的模板</caption>
+                                <thead>
+                                <tr>
+                                    <th>序号</th>
+                                    <th>模板类型</th>
+                                    <th>模板编号</th>
+                                    <th>移库时间</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr ng-repeat="x in storageremove">
+                                    <td>{{$index+1}}</td>
+                                    <td>{{x.types}}</td>
+                                    <td>{{x.formwork_id}}</td>
+                                    <td>{{x.create_time}}</td>
+                                </tr>
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+

@@ -1,0 +1,93 @@
+<div class="main-container" style="padding-left: 2%" ng-controller="productCtrl" ng-click="scrollon()">
+    <div class="main-container-inner">
+        <div class="space-24"></div>
+
+        <div class="page-content">
+            <div class="page-header animated bounceInLeft ">
+                <h3>
+                    <!--<i class="icon-spinner icon-spin orange bigger-125"></i>-->
+                    <b>质检管理</b>
+                </h3>
+            </div>
+            <form class="form-horizontal animated bounceInRight" role="form" style="padding-top: 2%">
+                <div class="form-group">
+                    <label class="col-md-1 control-label no-padding-right">项目：</label>
+                    <div class="col-md-1">
+                        <select id="inputprj" style="width: 120%" ng-model="project" ng-change="change2(project)"
+                                ng-options="pr.id as pr.name for pr in prj">
+                            <option value="">--请选择项目--</option>
+                        </select>
+
+                    </div>
+                    <div class="col-md-2 pull-right">
+                        <div style="padding-top: 0px" id="qrcode"></div>
+                    </div>
+                </div>
+            </form>
+            <hr>
+            <div class="row">
+                <div class="col-md-2">
+                    <table id="table0" class="table table-striped table-hover table-condensed">
+                        <thead>
+                        <tr>
+                            <th>区包</th>
+                            <th>打包情况</th>
+                        </tr>
+                        </thead>
+                        <tbody ng-repeat="x in partinfo">
+                        <tr ng-click="x.$tablechild = !x.$tablechild;" ng-init="x.$tablechild = true">
+                            <td>{{x.name}}</td>
+                            <td>{{1}}</td>
+                        </tr>
+                        <span>
+                                    <tr style="background-color: papayawhip" ng-repeat="y in x.data | filter:query"
+                                        ng-if=x.$tablechild ng-click="change1(x.part_id,y.id)">
+                                        <td class="center">{{y.name}}</td>
+                                        <td>{{$index+1}}</td>
+                                    </tr>
+                                    </span>
+
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col-md-4">
+                    <table id="table1" class="table table-striped table-bordered table-hover table-condensed">
+                        <thead>
+                        <tr>
+                            <th>序号</th>
+                            <th>模板名称</th>
+                            <th>模板类型</th>
+                            <th>模板编号</th>
+                            <th>已打印</th>
+                            <th>操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr ng-repeat="x in formworklouti | filter:query" ng-click="show3D(x.fromwork_id)">
+                            <td>{{$index+1}}</td>
+                            <td>{{x.number}}</td>
+                            <td>无</td>
+                            <td>无</td>
+                            <td>未打印</td>
+                            <td>无法打印</td>
+                            <!--<td ng-if="x.isprinted == '1'"><span class="label label-sm label-success">已打印</span></td>
+                            <td ng-if="x.isprinted == '0'"><span class="label label-sm label-warning">未打印</span></td>
+                            <td><button class="btn-info" ng-click="printlt(x.fromwork_id,x.number)">打印二维码</button></td>
+                       -->
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="col-md-6">
+                    <iframe id="iframe1" name="viewer1" width="100%" height="350" scrolling="yes" frameBorder="0"
+                            src="/designPlatform/Application/Viewer/View/index.html"></iframe>
+                </div>
+                <div id="example1"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+

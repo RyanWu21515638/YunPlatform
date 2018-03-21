@@ -1,0 +1,116 @@
+<div class="main-container" style="padding-left: 2%;">
+    <div class="main-container-inner" ng-controller="mechineCtrl">
+        <div class="page-content">
+
+            <div class="space-24"></div>
+            <div class="page-header">
+                <h3>
+                    <!--<i class="icon-spinner icon-spin orange bigger-125"></i>-->
+                    <b>机台管理</b>
+                </h3>
+
+            </div>
+            <form class="form-horizontal" role="form">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label no-padding-right" for="form-field-1"> 机台查询： </label>
+                    <div class="col-sm-6">
+                        <input type="text" id="form-field-1" placeholder="请输入编号或者姓名" ng-model="query"
+                               style="width: 50%"/>
+                    </div>
+                    <div class="col-sm-3">
+                        <button type="button" class="btn btn-primary btn-sm right" data-toggle="modal"
+                                data-target="#modal-form" ng-click="reset()">
+                            添加机台
+                        </button>
+                        <button type="button" class="btn btn-primary btn-sm right"ng-click="jtback()">
+                            返回
+                        </button>
+
+                    </div>
+                    <div id="modal-form" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                         aria-hidden="true">
+                        <div class="modal-dialog" style="width:40%;">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                    <h4 class="blue bigger">请填写机台信息</h4>
+                                </div>
+                                <div class="modal-body overflow-visible">
+                                    <div class="row">
+                                        <!--<div class="col-xs-12 col-sm-5">
+                                            <input type="file"/>
+                                        </div>-->
+
+                                        <div class="row">
+                                            <label class="col-lg-2 col-lg-offset-2 control-label">工序:</label>
+                                            <select class="col-lg-4"
+                                                    ng-model="mechine.process_id"
+                                                    ng-options="pc.id as pc.names for pc in process">
+                                                <option value="">-- 请选择工序 --</option>
+                                            </select>
+                                            <label class="col-lg-2" style="color: red">*必选</label>
+                                        </div>
+                                        <div class="row">
+                                            <label class="col-lg-2 col-lg-offset-2 control-label">机台代码:</label>
+                                            <input class="col-lg-4" type="text" placeholder="例：切割（Q1）/冲孔(C8)"
+                                                   ng-model="mechine.number"/>
+                                            <label class="col-lg-2" style="color: red">*必填</label>
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <label class="col-xs-12 col-sm-3 control-label" id="label1">{{message}}</label>
+                                    <button class="btn btn-sm" data-dismiss="modal">
+                                        <i class="icon-remove"></i>
+                                        取消
+                                    </button>
+                                    <button class="btn btn-sm btn-primary" ng-click="resetmc()">
+                                        <i class="icon-undo"></i>
+                                        重置
+                                    </button>
+                                    <button class="btn btn-sm btn-primary" ng-click="addmc()">
+                                        <i class="icon-ok"></i>
+                                        增加
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div><!--form-group-->
+                <div class="space-6"></div>
+                <div class="table-responsive">
+                    <table id="sample-table-2" class="table table-striped table-bordered table-hover">
+                        <thead>
+                        <!--colspan="4"用于合并单元格-->
+                        <tr>
+                            <th width="25%">序号</th>
+                            <th width="25%">机台编号</th>
+                            <th width="25%">机台工序</th>
+                            <th width="10%">操作</th>
+                        </tr>
+                        </thead>
+                    <tbody>
+                    <tr ng-repeat="x in mechineinfo | filter:query">
+                        <td>{{$index+1}}</td>
+                        <td>{{x.number}}</td>
+                        <td>{{x.names}}</td>
+                        <td>
+                            <div class="visible-md visible-lg hidden-sm hidden-xs action-buttons">
+                                <a class="red" href="" ng-click="deletemc(x.id)">
+                                    <i class="icon-trash bigger-130"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                    </table>
+
+                </div>
+            </form>
+
+
+        </div><!--pagecontent-->
+    </div><!-- main-container-inner-->
+</div>
+

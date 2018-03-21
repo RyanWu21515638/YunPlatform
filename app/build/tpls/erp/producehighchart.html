@@ -1,0 +1,94 @@
+<div class="main-container" ng-controller="ErpCtrl" style="padding-left: 2%">
+
+    <div class="main-container-inner">
+        <div class="space-24"></div>
+
+        <div class="page-content">
+            <div class="page-header">
+                <h3>
+                    <!--<i class="icon-spinner icon-spin orange bigger-125"></i>-->
+                    <b>生产看板</b>
+                </h3>
+
+            </div>
+            <form class="form-horizontal">
+                <div class="form-group">
+
+                    <!--<div class="col-md-1 pull-right">
+                        <select style="width: 100%">
+                            <option value="1">按月份统计</option>
+                            <option value="2">按年份统计</option>
+                        </select>
+
+                    </div>-->
+                    <label class="col-md-1 col-md-offset-1 control-label no-padding-right">开始时间：</label>
+                    <input size="16" type="text" value={{t1.year}}-{{t1.month}} readonly class="col-md-1"
+                           id="timepicker1">
+
+                    <label class="col-md-1 control-label no-padding-right">结束时间：</label>
+                    <input size="16" type="text" value={{t2.year}}-{{t2.month}} readonly class="col-md-1"
+                           id="timepicker2">
+                    <div class="col-md-1">
+
+                    </div>
+
+                    <label class="col-md-1 control-label no-padding-right">项目：</label>
+                    <div class="col-md-1">
+                        <select id="inputprj" style="width: 160%" ng-model="project" ng-change="prjselect(project)"
+                                ng-options="pr.id as pr.name for pr in prj" ng-disabled="!inputprj">
+                            <option value="">--请选择项目--</option>
+                        </select>
+
+                    </div>
+                </div>
+
+            </form>
+
+            <div class="row" >
+                <div class="col-lg-12 col-md-12" id="container1" style="display: none"></div>
+                <button class="btn btn-danger pull-right" ng-click="back()">
+                    返回
+                </button>
+            </div>
+
+            <div class="space-24"></div>
+            <div class="row">
+
+                <div class="col-lg-12 col-md-12" style="display: none" id="prjbar" style="display: none">
+                    <div><h4 class="center">项目生产进度对比</h4></div>
+                    <div class="space-24"></div>
+                    <div class="row">
+                        <div class="progress col-lg-1 col-md-2 col-lg-offset-1" data-percent="{{incisepercent}}%">
+                            <div class="progress-bar progress-bar-info" style="width:{{incisepercent}}%"></div>
+                        </div>
+
+                        <div class="progress col-lg-1 col-md-2 col-lg-offset-2" data-percent="{{punchpercent}}%">
+                            <div class="progress-bar progress-bar-danger" style="width:{{punchpercent}}%;"></div>
+                        </div>
+
+                        <div class="progress col-lg-1 col-md-2 col-lg-offset-2" data-percent="{{weldpercent}}%">
+                            <div class="progress-bar progress-bar-success" style="width:{{weldpercent}}%;"></div>
+                        </div>
+                        <div class="progress col-lg-1 col-md-2 col-lg-offset-2" data-percent="{{feedpercent}}%">
+                            <div class="progress-bar progress-bar-inverse" style="width:{{weldpercent}}%;"></div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div id="containerpie1" class="col-lg-3 col-md-2"></div>
+                        <div id="containerpie2" class="col-lg-3 col-md-2"></div>
+                        <div id="containerpie3" class="col-lg-3 col-md-2"></div>
+                        <div id="containerpie4" class="col-lg-3 col-md-2"></div>
+                    </div>
+
+
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+
+

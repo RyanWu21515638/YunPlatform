@@ -1,0 +1,180 @@
+<style>
+    iframe.fixed {
+        position: fixed;
+        left: 55%;
+        top: 58%;
+        height: 40%;
+    }
+
+    div.fixed {
+        position: fixed;
+        left: 55%;
+        top: 15%;
+        height: 40%;
+    }
+</style>
+
+<div class="main-container" ng-controller="ErpCtrl" ng-click="scrollon()" style="padding-left: 2%">
+
+    <div class="main-container-inner">
+        <div class="space-24"></div>
+        <div class="page-content">
+            <div class="page-header">
+                <h3>
+                    <!--<i class="icon-spinner icon-spin orange bigger-125"></i>-->
+                    <b>分料</b>
+                </h3>
+
+            </div>
+            <form class="form-horizontal" role="form">
+                <div class="form-group">
+                    <label class="col-md-1 control-label">请选择项目:</label>
+                    <div class="col-md-1">
+                        <select id="inputprj" style="width: 100%" ng-model="project" ng-change="feedselect(project)"
+                                ng-options="pr.id as pr.name for pr in prj" ng-disabled="!inputprj">
+                            <option value="">--请选择项目--</option>
+                        </select>
+                    </div>
+
+                    <label class="col-md-1 control-label no-padding-right"> 分料扫码区： </label>
+                    <div class="col-md-2">
+                        <input id="scan" type="text" placeholder="分料扫码区" ng-model="scanner.ad" style="width: 100%"
+                               ng-keydown="feedingscan($event)"/><!--autofocus ng-blur="focus()"-->
+                    </div>
+					<label id="labelmsg" style="display:none;">分料成功</label>
+					<label id="labelmsg2" style="display:none;">已经分过了</label>
+                </div>
+            </form>
+            <div class="row" id="tb4" style="display: none">
+                <div class="table-responsive col-md-6">
+                    <div class="panel-heading" style="background-color: navajowhite">
+                        <h3 class="panel-title" >分料清单</h3>
+                    </div>
+                    <table id="table3" class="table table-bordered table-hover">
+                        <thead>
+                        <tr>
+                            <th width="30%" colspan="2">合计</th>
+                            <th width="7%">{{num}}</th>
+                            <th width="10%" class="center">{{ion}}</th>
+                            <th width="10%" class="center">
+                                {{punched}}
+                            </th>
+                            <th width="10%" class="center">{{weld}}</th>
+                            <th width="10%" class="center">{{feed}}</th>
+                            <th width="10%" class="center">{{num-feed}}</th>
+                            <th width="13%" class="center" colspan="2" rowspan="2">补印</th>
+                        </tr>
+                        <tr>
+                            <th>序号</th>
+                            <th>模板型号</th>
+                            <th>数量</th>
+                            <th class="center">已切割</th>
+                            <th class="center">已冲孔</th>
+                            <th class="center">已焊接</th>
+                            <th class="center">
+                                <input type="checkbox" ng-model="feedchecked">
+                                已分料</th>
+                            <th class="center">
+                                <input type="checkbox" ng-model="feedcheck">
+                                未分料</th>
+                        </tr>
+
+                        </thead>
+                        <tbody ng-repeat="x in feedinginfo | filter:query" ng-init="p_index=$index+1;p_number=x.number">
+                        <tr>
+                            <td class="center" width="10%">
+                                {{$index+1}}
+                            </td>
+                            <td width="20%">{{x.number}}</td>
+                            <td width="7%">{{x.num}}</td>
+                            <td class="center" width="10%">
+                                {{x.ion}}
+                            </td>
+                            <td class="center" width="10%">
+                                {{x.punched}}
+                            </td>
+                            <td class="center" width="10%">
+                                {{x.weld}}
+                            </td>
+                            <td class="center" width="10%">
+                                {{x.material}}
+                            </td>
+                            <td class="center" width="10%">
+                                {{x.num-x.material}}
+                            </td>
+                            <td class="center" width="10%" ng-click="x.$tablechild=!x.$tablechild;feeddt($index)"
+                                ng-init="x.$tablechild = true">
+                                <i ng-if="(x.$tablechild)" class="icon-plus" ></i>
+                                <i ng-if="(!x.$tablechild)" class="icon-minus"></i>
+                            </td>
+                        </tr>
+                        <span>
+                            <tr style="background-color: papayawhip" ng-repeat="y in x.data"
+                                ng-if=!x.$tablechild&&((y.weld=='1'&&feedchecked)||(y.weld=='0'&&feedcheck))>
+                                <td class="center">{{p_index}}.{{$index+1}}</td>
+                                <td>{{p_number}}(id:{{y.id}})</td>
+                                <td>1
+                                </td>
+                                <td class="center">
+                                    <i ng-if="y.incise=='1'|| printbl1[y.id]" class="icon-ok bigger-140 green"></i>
+                                    <i ng-if="!(y.incise=='1'|| printbl1[y.id])" class="icon-remove bigger-140 red"></i>
+                                </td>
+                                <td class="center">
+                                    <i ng-if="y.punch=='1'|| punchrc1[y.id]" class="icon-ok bigger-140 green"></i>
+                                    <i ng-if="!(y.punch=='1'|| punchrc1[y.id])" class="icon-remove bigger-140 red"></i>
+                                </td>
+                                <td class="center">
+                                    <i ng-if="y.weld=='1'|| weldrc1[y.id]" class="icon-ok bigger-140 green"></i>
+                                    <i ng-if="!(y.weld=='1'|| weldrc1[y.id])" class="icon-remove bigger-140 red"></i>
+                                </td>
+                                <td class="center">
+                                    <i ng-if="y.material=='1' || feedrc1[y.id] =='1'" class="icon-ok bigger-140 green"></i>
+                                </td>
+                                <td class="center">
+                                    <i ng-if="y.material=='0' && feedrc1[y.id] =='0'" class="icon-remove bigger-140 red"></i>
+                                </td>
+                                <td class="center"><button class="btn-danger" ng-click="printBarcode(project_id,y.id,p_number,y.name);">补印</button></td>
+                            </tr>
+                            <tr style="background-color: papayawhip" ng-repeat="y in x.data"
+                                ng-if=!x.$tablechild&&!feedchecked&&!feedcheck>
+                                <td class="center">{{p_index}}.{{$index+1}}</td>
+                                <td>{{p_number}}(id:{{y.id}})</td>
+                                <td>1
+                                </td>
+                                <td class="center">
+                                    <i ng-if="y.incise=='1'|| printbl1[y.id]" class="icon-ok bigger-140 green"></i>
+                                    <i ng-if="!(y.incise=='1'|| printbl1[y.id])" class="icon-remove bigger-140 red"></i>
+                                </td>
+                                <td class="center">
+                                    <i ng-if="y.punch=='1'|| punchrc1[y.id]" class="icon-ok bigger-140 green"></i>
+                                    <i ng-if="!(y.punch=='1'|| punchrc1[y.id])" class="icon-remove bigger-140 red"></i>
+                                </td>
+                                <td class="center">
+                                    <i ng-if="y.weld=='1'|| weldrc1[y.id]" class="icon-ok bigger-140 green"></i>
+                                    <i ng-if="!(y.weld=='1'|| weldrc1[y.id])" class="icon-remove bigger-140 red"></i>
+                                </td>
+                                <td class="center">
+                                    <i ng-if="y.material=='1' || feedrc1[y.id] =='1'" class="icon-ok bigger-140 green"></i>
+                                </td>
+                                <td class="center">
+                                    <i ng-if="y.material=='0' && feedrc1[y.id] =='0'" class="icon-remove bigger-140 red"></i>
+                                </td>
+                                <td class="center"><button class="btn-danger" ng-click="printBarcode(project_id,y.id,p_number,y.name);">补印</button></td>
+                            </tr>
+                        </span>
+
+
+                        </tbody>
+                    </table>
+                    <div id="bcTarget"></div>
+                </div>
+                <div class="col-md-6" id="fix4" style="display: none">
+                    <div class="col-lg-6 col-md-6 fixed" id="example4"></div>
+                    <iframe class="fixed" id="iframe4" name="viewer4" width="38%" scrolling="yes"
+                            src="/rlerp/Application/Viewer/View/index.html"></iframe>
+                </div>
+            </div>
+
+        </div><!--pagecontent-->
+    </div><!-- main-container-inner-->
+</div>
